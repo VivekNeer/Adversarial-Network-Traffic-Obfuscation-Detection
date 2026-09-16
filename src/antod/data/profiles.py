@@ -169,7 +169,11 @@ def file_download(rng: np.random.Generator) -> np.ndarray:
     sizes = [rng.normal(520, 100)]
     dirs = [UP]
     bt, bs, bd, _ = _bulk_transfer(
-        rng, rng.uniform(0.01, 0.08), rng.uniform(2.0e5, 1.5e6), rng.uniform(1e7, 1.2e8), ack_every=3
+        rng,
+        rng.uniform(0.01, 0.08),
+        rng.uniform(2.0e5, 1.5e6),
+        rng.uniform(1e7, 1.2e8),
+        ack_every=3,
     )
     return _pkts(times + bt, sizes + bs, dirs + bd)
 

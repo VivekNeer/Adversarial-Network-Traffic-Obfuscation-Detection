@@ -26,8 +26,8 @@ from antod.data.obfuscation import (
 from antod.data.profiles import ALL_PROFILES, MIN_PKT, MTU
 from antod.data.synth import (
     BENIGN,
-    MALICIOUS_OBFUSCATED,
     LABEL_NAMES,
+    MALICIOUS_OBFUSCATED,
     SynthConfig,
     generate_dataset,
 )
