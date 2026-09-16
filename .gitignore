@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Env / tooling
+.python-version
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Data: raw captures and generated datasets are not versioned
+data/raw/*
+data/processed/*
+data/interim/*
+!data/**/.gitkeep
+*.pcap
+*.pcapng
+*.npz
+*.npy
+*.parquet
+
+# Model checkpoints
+*.pt
+*.pth
+*.joblib
+checkpoints/
+
+# Experiment outputs: keep committed metrics/figures, ignore scratch runs
+experiments/runs/
+experiments/**/*.log
+
+# OS / editor
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+
+# Office temp files
+~$*
