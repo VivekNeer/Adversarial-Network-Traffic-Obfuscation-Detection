@@ -1,0 +1,33 @@
+# Statistics-only comparison. If this matches the CNN, the convolution is not
+# earning its complexity and the report should say so.
+name: mlp
+seed: 42
+
+dataset:
+  source: cached
+  path: data/processed/dataset.npz
+
+train:
+  model: mlp
+  epochs: 60
+  batch_size: 128
+  lr: 0.001
+  patience: 12
+  selection_metric: macro_f1
+
+defense:
+  method: none
+
+baselines: [random_forest, logistic_regression]
+
+attacks:
+  - {name: fgsm, surface: stats, eps: 0.05}
+  - {name: fgsm, surface: stats, eps: 0.1}
+  - {name: pgd, surface: stats, eps: 0.05, steps: 10}
+  - {name: pgd, surface: stats, eps: 0.1, steps: 10}
+  - {name: pgd, surface: stats, eps: 0.2, steps: 20}
+  - {name: pgd, surface: stats, eps: 0.1, steps: 10, constrained: false}
+  - {name: pgd, surface: stats, eps: 0.1, steps: 10, targeted: true}
+
+output:
+  dir: experiments/results/mlp

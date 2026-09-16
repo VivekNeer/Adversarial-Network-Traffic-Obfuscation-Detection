@@ -1,0 +1,21 @@
+# Dataset generation only. `antod generate -c configs/dataset.yaml` writes the
+# .npz that every other config can then load with `source: cached`.
+name: dataset
+seed: 42
+
+dataset:
+  source: synthetic
+  path: data/processed/dataset.npz
+  n_flows: 20000
+  seed: 42
+  class_weights: [0.34, 0.33, 0.33]
+  # A third of benign traffic is obfuscated too, and stays labelled benign.
+  # Without it the model learns "obfuscated implies malicious" and flags every
+  # VPN user; the false-positive column is where that would show up.
+  benign_obfuscation_rate: 0.35
+  min_steps: 1
+  max_steps: 3
+  min_packets: 8
+
+output:
+  dir: experiments/results/dataset
