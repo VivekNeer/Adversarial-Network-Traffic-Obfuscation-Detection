@@ -19,8 +19,15 @@ import torch
 
 from antod.adversarial.attacks import AttackConfig
 from antod.adversarial.defenses import adversarial_training
+from antod.calibration import calibrate
 from antod.config import ExperimentConfig, load_config, save_config
-from antod.data.datasets import FlowDataset, Splits, build_dataset, stratified_split
+from antod.data.datasets import (
+    FlowDataset,
+    FlowTensorDataset,
+    Splits,
+    build_dataset,
+    stratified_split,
+)
 from antod.evaluate import (
     attack_sweep,
     constrained_vs_unconstrained,
@@ -42,6 +49,7 @@ from antod.utils.common import (
     set_seed,
     write_markdown_table,
 )
+from antod.utils.metrics import precision_at_base_rate
 from antod.utils.plots import (
     plot_confusion_matrix,
     plot_model_comparison,
@@ -149,10 +157,30 @@ def cmd_train(cfg: ExperimentConfig) -> int:
         result.model, splits.test, splits.scaler, device, paths["root"] / "predictions.csv"
     )
 
+    calibration = calibrate(
+        result.model,
+        tuple(t.to(device) for t in FlowTensorDataset(splits.val, splits.scaler).tensors()),
+        tuple(t.to(device) for t in FlowTensorDataset(splits.test, splits.scaler).tensors()),
+    )
+    logger.info(
+        "calibration: T=%.3f  ECE %.4f -> %.4f",
+        calibration["temperature"],
+        calibration["ece_before"],
+        calibration["ece_after"],
+    )
+    base_rate = {f"{share:g}": precision_at_base_rate(test, share) for share in (0.9, 0.99, 0.999)}
+    logger.info(
+        "at 99%% benign traffic: precision %.3f, %.1f false alerts per 10k flows",
+        base_rate["0.99"]["precision"],
+        base_rate["0.99"]["false_alerts_per_10k"],
+    )
+
     report: dict = {
         "name": cfg.name,
         "model": cfg.train.model,
         "defense": cfg.defense.method,
+        "calibration": calibration,
+        "precision_at_base_rate": base_rate,
         "best_epoch": result.best_epoch,
         "train_seconds": result.train_seconds,
         "n_parameters": result.model.n_parameters(),
@@ -404,7 +432,6 @@ def write_predictions(model, ds: FlowDataset, scaler, device, path: Path) -> Pat
     """
     import csv
 
-    from antod.data.datasets import FlowTensorDataset
     from antod.data.synth import LABEL_NAMES
 
     seq, stats, y = FlowTensorDataset(ds, scaler).tensors()
@@ -436,7 +463,6 @@ def cmd_predict(cfg: ExperimentConfig, csv_path: str | None, out: str | None) ->
     """Score a per-packet CSV with a trained checkpoint. No labels required."""
     from collections import Counter
 
-    from antod.data.datasets import FlowTensorDataset
     from antod.data.real_loader import load_packet_csv
     from antod.data.synth import LABEL_NAMES
 

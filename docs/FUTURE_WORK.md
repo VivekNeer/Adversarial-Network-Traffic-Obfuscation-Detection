@@ -19,8 +19,8 @@ Honest list of what is missing, what is weak, and what would be worth doing next
       `tshark` and running `source: real` is the single most valuable next step —
       it turns the results from "upper bound on a simulator" into "measured on
       traffic".
-- [ ] **Seed variance.** Results are from one seed. At minimum three seeds with
-      mean ± std are needed before any claim that model A beats model B.
+- [ ] **Seed variance.** `scripts/seed_variance.py` is in place; run it for each
+      model config (3 seeds) and quote mean ± std in the report.
 
 ## Known limitations
 
@@ -28,10 +28,9 @@ Honest list of what is missing, what is weak, and what would be worth doing next
   qualitative signatures from the literature, not any specific network.
   Absolute accuracy is an upper bound; only *relative* conclusions (which model,
   which technique, how much adversarial training helps) should be read from it.
-- **Fixed sequence length of 128 packets.** Longer flows are truncated. An
-  attacker who front-loads a benign-looking prologue could push the malicious
-  behaviour past the window. A sliding-window or multi-window vote would close
-  this.
+- **Fixed sequence length of 128 packets during training.** `antod.inference.score_flow_windows`
+  now slides the window across the whole flow at inference (mean or
+  max-malicious combination), but training still sees only the first window.
 - **Attacks perturb features, not packets.** The sequence-space attack respects
   pad-only / delay-only, but the statistics-space attack perturbs the 51
   aggregates directly, and not every point in the feature box corresponds to a
@@ -59,15 +58,15 @@ Honest list of what is missing, what is weak, and what would be worth doing next
 - More profiles: DNS tunnelling, HTTP/2 multiplexing, QUIC, IoT telemetry.
 - More transforms: packet reordering, flow splitting across connections,
   domain fronting, traffic morphing with learned target distributions.
-- Realistic base rates (e.g. 95/3/2) with metrics reported at fixed FPR.
+- [x] Base-rate-adjusted precision and alerts-per-10k at 90/99/99.9% benign (`precision_at_base_rate`, in `metrics.json`).
+- Training at realistic base rates (e.g. 95/3/2) rather than only re-weighting at evaluation.
 
 ### Models
 - Attention or a small transformer over the packet sequence, to test whether
   position-aware models beat convolution on long-range cadence.
 - A bidirectional GRU/LSTM as a second sequence baseline.
-- Sliding-window inference for flows longer than 128 packets.
-- Calibration (temperature scaling) so probabilities are usable for alerting
-  thresholds.
+- [x] Sliding-window inference for flows longer than 128 packets (`antod/inference.py`).
+- [x] Calibration (temperature scaling + ECE) — `antod/calibration.py`, reported in `metrics.json`.
 
 ### Adversarial
 - Packet-level attacks that re-extract features after each step.
@@ -82,9 +81,9 @@ Honest list of what is missing, what is weak, and what would be worth doing next
 ### Engineering
 - GPU support is wired (`device: auto`) but untested; verify on a CUDA box.
 - `num_workers > 0` in dataloaders is untested on Windows.
-- Save per-flow predictions alongside metrics so failure cases can be inspected.
-- A `predict` CLI command that scores a new per-packet CSV with a checkpoint.
-- CI workflow running `ruff` + `pytest` on push.
+- [x] Per-flow predictions (`predictions.csv`) written by `antod train`.
+- [x] `antod predict --input packets.csv` scores a new per-packet CSV with a checkpoint.
+- [x] CI workflow (`.github/workflows/ci.yml`): ruff + pytest + quick smoke run on 3.11/3.12.
 - Pin dependency versions in `pyproject.toml` once the final run is done, so the
   reported numbers stay reproducible.
 

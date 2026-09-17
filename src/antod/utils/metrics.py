@@ -162,3 +162,27 @@ def clean_vs_attacked(clean: Metrics, attacked: Metrics) -> dict[str, float]:
         "malicious_recall_attacked": attacked.malicious_recall,
         "malicious_recall_drop": clean.malicious_recall - attacked.malicious_recall,
     }
+
+
+def precision_at_base_rate(metrics: Metrics, benign_share: float = 0.99) -> dict[str, float]:
+    """What the balanced-test numbers mean on a network that is mostly benign.
+
+    The test set is one-third benign; real traffic is closer to 99%. At that base
+    rate a false-positive rate that looks tiny produces more alerts than true
+    positives. This re-weights the measured recall and FPR to a chosen prevalence
+    and reports the precision an analyst would actually experience, plus how many
+    alerts per 10,000 flows are false.
+    """
+    if not 0.0 < benign_share < 1.0:
+        raise ValueError("benign_share must be strictly between 0 and 1")
+    malicious_share = 1.0 - benign_share
+    tp = metrics.malicious_recall * malicious_share
+    fp = metrics.false_positive_rate * benign_share
+    alerts = tp + fp
+    return {
+        "benign_share": benign_share,
+        "precision": float(tp / alerts) if alerts > 0 else 0.0,
+        "alerts_per_10k": float(alerts * 10_000),
+        "false_alerts_per_10k": float(fp * 10_000),
+        "true_alerts_per_10k": float(tp * 10_000),
+    }
