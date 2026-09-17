@@ -1,4 +1,4 @@
-"""Command-line entry point: ``antod generate | train | attack | evaluate | all``.
+"""Command-line entry point: ``antod generate | train | attack | evaluate | all | predict``.
 
 Every subcommand is driven by the same YAML file and writes into the same output
 directory, and each one starts by re-resolving the dataset from the config rather
@@ -145,6 +145,9 @@ def cmd_train(cfg: ExperimentConfig) -> int:
     test = evaluate_clean(result.model, splits.test, splits.scaler, device)
     logger.info("TEST  %s", test.summary())
     print(test.table())
+    write_predictions(
+        result.model, splits.test, splits.scaler, device, paths["root"] / "predictions.csv"
+    )
 
     report: dict = {
         "name": cfg.name,
@@ -390,6 +393,78 @@ def cmd_evaluate(cfg: ExperimentConfig) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------- #
+# predict
+# --------------------------------------------------------------------------- #
+def write_predictions(model, ds: FlowDataset, scaler, device, path: Path) -> Path:
+    """Dump one row per flow: provenance, true label, prediction and probabilities.
+
+    Metrics say *how often* the model is wrong; this file says *which flows*, so a
+    failure can be traced back to its profile and obfuscation recipe.
+    """
+    import csv
+
+    from antod.data.datasets import FlowTensorDataset
+    from antod.data.synth import LABEL_NAMES
+
+    seq, stats, y = FlowTensorDataset(ds, scaler).tensors()
+    with torch.no_grad():
+        proba = torch.softmax(model.eval()(seq.to(device), stats.to(device)), dim=1).cpu().numpy()
+    pred = proba.argmax(axis=1)
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(["index", "profile", "recipe", "y_true", "y_pred", "correct", *LABEL_NAMES])
+        for i in range(len(ds)):
+            w.writerow(
+                [
+                    i,
+                    ds.profile[i],
+                    ds.recipe[i],
+                    LABEL_NAMES[int(y[i])],
+                    LABEL_NAMES[int(pred[i])],
+                    int(pred[i] == y[i]),
+                    *[f"{p:.4f}" for p in proba[i]],
+                ]
+            )
+    logger.info("per-flow predictions -> %s", path)
+    return path
+
+
+def cmd_predict(cfg: ExperimentConfig, csv_path: str | None, out: str | None) -> int:
+    """Score a per-packet CSV with a trained checkpoint. No labels required."""
+    from collections import Counter
+
+    from antod.data.datasets import FlowTensorDataset
+    from antod.data.real_loader import load_packet_csv
+    from antod.data.synth import LABEL_NAMES
+
+    paths = _paths(cfg)
+    if not paths["checkpoint"].exists():
+        logger.error("no checkpoint at %s -- run `antod train` first", paths["checkpoint"])
+        return 1
+    if not csv_path:
+        logger.error("predict needs --input <per-packet csv>")
+        return 1
+
+    device = pick_device(cfg.train.device)
+    model, scaler, _ = load_checkpoint(paths["checkpoint"], device=cfg.train.device)
+    flows = load_packet_csv(csv_path, min_packets=cfg.dataset.min_packets)
+    ds = FlowDataset.from_flows(flows)
+
+    target = Path(out) if out else paths["root"] / "predictions_external.csv"
+    write_predictions(model, ds, scaler, device, target)
+
+    seq, stats, _ = FlowTensorDataset(ds, scaler).tensors()
+    pred = model.predict(seq.to(device), stats.to(device)).cpu().numpy()
+    counts = Counter(LABEL_NAMES[int(p)] for p in pred)
+    print(f"{len(ds)} flows scored -> {target}")
+    for name in LABEL_NAMES:
+        print(f"  {name:<22} {counts.get(name, 0):>6}")
+    return 0
+
+
 def cmd_all(cfg: ExperimentConfig) -> int:
     for step in (cmd_train, cmd_attack, cmd_evaluate):
         code = step(cfg)
@@ -407,6 +482,7 @@ COMMANDS = {
     "attack": cmd_attack,
     "evaluate": cmd_evaluate,
     "all": cmd_all,
+    "predict": cmd_predict,
 }
 
 
@@ -424,6 +500,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--n-flows", type=int, help="override the dataset size")
     parser.add_argument("--seed", type=int, help="override the seed")
     parser.add_argument("--device", help="cpu | cuda | auto")
+    parser.add_argument("--input", help="predict: per-packet CSV to score")
+    parser.add_argument("--predictions-out", help="predict: where to write the scored rows")
     return parser
 
 
@@ -454,6 +532,8 @@ def main(argv: list[str] | None = None) -> int:
     cfg = apply_overrides(load_config(args.config), args)
     logger.info("experiment %r -> %s", cfg.name, cfg.output.dir)
     torch.set_num_threads(max(1, (torch.get_num_threads() or 4)))
+    if args.command == "predict":
+        return cmd_predict(cfg, args.input, args.predictions_out)
     return COMMANDS[args.command](cfg)
 
 

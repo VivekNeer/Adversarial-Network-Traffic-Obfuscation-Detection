@@ -55,7 +55,11 @@ def main(argv: list[str] | None = None) -> int:
         if cmd_generate(data_cfg) != 0:
             return 1
 
-    for stage, step in (("training", cmd_train), ("attacking", cmd_attack), ("evaluating", cmd_evaluate)):
+    for stage, step in (
+        ("training", cmd_train),
+        ("attacking", cmd_attack),
+        ("evaluating", cmd_evaluate),
+    ):
         for name in MODEL_CONFIGS:
             logger.info("=== %s %s ===", stage, name)
             cfg = _load(name, args.quick)
