@@ -4,15 +4,15 @@ Honest list of what is missing, what is weak, and what would be worth doing next
 
 ## Not done yet
 
-- [ ] **Full experiment run.** The pipeline is verified end to end with
-      `scripts/run_all.py --quick`, but the full 20k-flow / 60-epoch run has not
-      been completed and `experiments/results/` is empty. Run
-      `python scripts/run_all.py` (≈1 hour on CPU) to produce the numbers,
-      figures and tables the report needs.
-- [ ] **Report and book chapter.** `docs/templates/` holds the college report
-      template and the book-chapter guideline; neither has been filled in yet.
-      Both should be written *after* the full run, from the generated
-      `tables/*.md` and `figures/*.png`.
+- [x] **Full experiment run.** Done: 20k flows, five models, 43 minutes on CPU.
+      Results are committed under `experiments/results/`.
+- [x] **Report, book chapter and presentation.** Generated from the results by
+      `scripts/build_report.js`, `scripts/build_chapter.js` and
+      `scripts/build_deck.js` into `docs/ANTOD_report.docx`,
+      `docs/ANTOD_book_chapter.docx` and `docs/ANTOD_presentation.pptx`.
+      Re-run the three scripts after any new experiment; every number and
+      figure is read from `experiments/results/`. The evaluation-rubric pages
+      in the college template are for the evaluators and were left out.
 - [ ] **Validation on real captures.** Every number so far is on synthetic
       traffic. The real-data loader exists (`antod.data.real_loader`) but has not
       been exercised on an actual PCAP. Exporting a slice of CIC-IDS2017 with
