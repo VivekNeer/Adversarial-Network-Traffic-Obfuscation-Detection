@@ -26,7 +26,7 @@ from antod.utils.common import get_logger  # noqa: E402
 
 logger = get_logger("run_all")
 
-MODEL_CONFIGS = ["cnn1d", "mlp", "hybrid", "hybrid_advtrain"]
+MODEL_CONFIGS = ["cnn1d", "mlp", "gru", "hybrid", "hybrid_advtrain"]
 
 
 def _load(name: str, quick: bool):
