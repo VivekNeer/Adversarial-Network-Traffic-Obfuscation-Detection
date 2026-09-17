@@ -1,5 +1,14 @@
 # Adversarial Network Traffic Obfuscation Detection (ANTOD)
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Python%203.11-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white" alt="PyTorch">
+  <img src="https://img.shields.io/badge/Adversarial%20ML-FGSM%20%2F%20PGD-b5179e?style=flat-square" alt="Adversarial ML">
+  <img src="https://img.shields.io/badge/Domain-Defensive%20Research-2b6cb0?style=flat-square" alt="Defensive Research">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License">
+</p>
+
+
 Deep Learning Mini Project (CS722T2C) — V Semester, B.E. Computer Science & Engineering
 Sahyadri College of Engineering & Management, Mangaluru (VTU, Belagavi)
 
