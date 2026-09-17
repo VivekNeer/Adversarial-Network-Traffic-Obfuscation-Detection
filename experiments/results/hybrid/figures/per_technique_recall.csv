@@ -1,0 +1,9 @@
+name,recall on malicious_obfuscated
+block_padding,0.9925
+constant_rate_shaping,0.975
+protocol_mimicry,0.9725
+random_padding,0.9625
+dummy_injection,0.9175
+tunnel_encapsulation,0.9075
+timing_jitter,0.825
+fragmentation,0.6525

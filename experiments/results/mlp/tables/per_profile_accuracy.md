@@ -1,0 +1,14 @@
+| profile | accuracy |
+| --- | --- |
+| brute_force | 0.9376 |
+| c2_beacon | 0.9644 |
+| data_exfiltration | 0.9978 |
+| ddos_flood | 0.9757 |
+| dns_query | 0.8800 |
+| file_download | 0.9887 |
+| port_scan | 0.9883 |
+| reverse_shell | 0.9295 |
+| ssh_interactive | 0.9338 |
+| video_streaming | 0.9963 |
+| voip | 0.9071 |
+| web_browsing | 0.9588 |

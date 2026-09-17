@@ -1,0 +1,13 @@
+series,epsilon,evasion rate
+untargeted,0.0,0.012121212121212121
+untargeted,0.02,0.015151515151515152
+untargeted,0.05,0.018560606060606062
+untargeted,0.1,0.025
+untargeted,0.2,0.06325757575757576
+untargeted,0.3,0.12348484848484849
+targeted at benign,0.0,0.012121212121212121
+targeted at benign,0.02,0.015151515151515152
+targeted at benign,0.05,0.018560606060606062
+targeted at benign,0.1,0.025
+targeted at benign,0.2,0.06553030303030304
+targeted at benign,0.3,0.13068181818181818

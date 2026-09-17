@@ -1,0 +1,13 @@
+series,epsilon,accuracy
+domain-constrained,0.0,0.9650087478130467
+domain-constrained,0.02,0.9595101224693826
+domain-constrained,0.05,0.9525118720319921
+domain-constrained,0.1,0.9375156210947263
+domain-constrained,0.2,0.8412896775806048
+domain-constrained,0.3,0.45388652836790805
+unconstrained,0.0,0.9650087478130467
+unconstrained,0.02,0.9565108722819295
+unconstrained,0.05,0.9462634341414646
+unconstrained,0.1,0.9107723069232692
+unconstrained,0.2,0.654336415896026
+unconstrained,0.3,0.36590852286928266

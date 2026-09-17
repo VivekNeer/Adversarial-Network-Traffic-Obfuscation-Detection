@@ -1,0 +1,10 @@
+| technique | recall |
+| --- | --- |
+| fragmentation | 0.6525 |
+| timing_jitter | 0.6925 |
+| dummy_injection | 0.9025 |
+| tunnel_encapsulation | 0.9075 |
+| random_padding | 0.9325 |
+| constant_rate_shaping | 0.9675 |
+| protocol_mimicry | 0.9775 |
+| block_padding | 0.9925 |

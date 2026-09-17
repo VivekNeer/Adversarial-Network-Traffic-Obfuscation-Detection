@@ -230,5 +230,36 @@
       "mean_pkt_size": 0.02681936487198473,
       "size_mean": 0.02681936487198473
     }
+  },
+  "calibration": {
+    "temperature": 0.8219602704048157,
+    "ece_before": 0.025107425843081288,
+    "ece_after": 0.009734063037065713,
+    "mean_confidence_before": 0.9417462944984436,
+    "mean_confidence_after": 0.9634814262390137,
+    "accuracy": 0.9617595601099725
+  },
+  "precision_at_base_rate": {
+    "0.9": {
+      "benign_share": 0.9,
+      "precision": 0.7089518160791389,
+      "alerts_per_10k": 1385.955625320063,
+      "false_alerts_per_10k": 403.37986774430567,
+      "true_alerts_per_10k": 982.5757575757574
+    },
+    "0.99": {
+      "benign_share": 0.99,
+      "precision": 0.18129525854609643,
+      "alerts_per_10k": 541.9754302763121,
+      "false_alerts_per_10k": 443.7178545187362,
+      "true_alerts_per_10k": 98.25757575757585
+    },
+    "0.999": {
+      "benign_share": 0.999,
+      "precision": 0.021473432351438528,
+      "alerts_per_10k": 457.57741077193685,
+      "false_alerts_per_10k": 447.7516531961793,
+      "true_alerts_per_10k": 9.825757575757585
+    }
   }
 }

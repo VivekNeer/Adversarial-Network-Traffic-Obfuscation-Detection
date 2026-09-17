@@ -1,0 +1,127 @@
+name: hybrid
+seed: 42
+dataset:
+  source: cached
+  path: data/processed/dataset.npz
+  n_flows: 12000
+  seed: 42
+  class_weights:
+  - 0.34
+  - 0.33
+  - 0.33
+  benign_obfuscation_rate: 0.35
+  min_steps: 1
+  max_steps: 3
+  min_packets: 8
+  allowed_transforms: null
+  max_flows: null
+split:
+  val_frac: 0.15
+  test_frac: 0.2
+  seed: 42
+train:
+  model: hybrid
+  model_kwargs: {}
+  epochs: 60
+  batch_size: 128
+  lr: 0.001
+  weight_decay: 0.0001
+  grad_clip: 1.0
+  label_smoothing: 0.05
+  scheduler: cosine
+  patience: 12
+  selection_metric: macro_f1
+  device: auto
+  seed: 42
+  num_workers: 0
+  adv_ratio: 0.5
+defense:
+  method: none
+  attack:
+    name: pgd
+    surface: both
+    eps: 0.1
+    alpha: null
+    steps: 5
+    random_start: true
+    constrained: true
+    targeted: false
+    target_class: 0
+    seed: 0
+baselines:
+- random_forest
+attacks:
+- name: fgsm
+  surface: both
+  eps: 0.05
+  alpha: null
+  steps: 10
+  random_start: true
+  constrained: true
+  targeted: false
+  target_class: 0
+  seed: 0
+- name: fgsm
+  surface: both
+  eps: 0.1
+  alpha: null
+  steps: 10
+  random_start: true
+  constrained: true
+  targeted: false
+  target_class: 0
+  seed: 0
+- name: pgd
+  surface: both
+  eps: 0.05
+  alpha: null
+  steps: 10
+  random_start: true
+  constrained: true
+  targeted: false
+  target_class: 0
+  seed: 0
+- name: pgd
+  surface: both
+  eps: 0.1
+  alpha: null
+  steps: 10
+  random_start: true
+  constrained: true
+  targeted: false
+  target_class: 0
+  seed: 0
+- name: pgd
+  surface: both
+  eps: 0.2
+  alpha: null
+  steps: 20
+  random_start: true
+  constrained: true
+  targeted: false
+  target_class: 0
+  seed: 0
+- name: pgd
+  surface: both
+  eps: 0.1
+  alpha: null
+  steps: 10
+  random_start: true
+  constrained: false
+  targeted: false
+  target_class: 0
+  seed: 0
+- name: pgd
+  surface: both
+  eps: 0.1
+  alpha: null
+  steps: 10
+  random_start: true
+  constrained: true
+  targeted: true
+  target_class: 0
+  seed: 0
+output:
+  dir: experiments/results/hybrid
+  save_checkpoint: true
+  save_figures: true

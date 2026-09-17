@@ -1,0 +1,56 @@
+{
+  "per_technique_recall": {
+    "block_padding": 0.9925,
+    "random_padding": 0.9325,
+    "fragmentation": 0.6525,
+    "timing_jitter": 0.6925,
+    "constant_rate_shaping": 0.9675,
+    "dummy_injection": 0.9025,
+    "tunnel_encapsulation": 0.9075,
+    "protocol_mimicry": 0.9775
+  },
+  "per_profile_accuracy": {
+    "brute_force": 0.9487750556792873,
+    "c2_beacon": 0.9732739420935412,
+    "data_exfiltration": 0.9977777777777778,
+    "ddos_flood": 0.9733009708737864,
+    "dns_query": 0.92,
+    "file_download": 0.9849624060150376,
+    "port_scan": 0.9906103286384976,
+    "reverse_shell": 0.9383259911894273,
+    "ssh_interactive": 0.9372822299651568,
+    "video_streaming": 0.988929889298893,
+    "voip": 0.9256505576208178,
+    "web_browsing": 0.9423868312757202
+  },
+  "transfer_matrix": [
+    {
+      "crafted_on": "cnn1d:cnn1d",
+      "cnn1d:cnn1d": 0.511872031992002,
+      "hybrid:hybrid": 0.9585103724068983,
+      "hybrid_advtrain:hybrid+advtrain": 0.9622594351412147,
+      "mlp:mlp": 0.9617595601099725
+    },
+    {
+      "crafted_on": "hybrid:hybrid",
+      "cnn1d:cnn1d": 0.591102224443889,
+      "hybrid:hybrid": 0.7275681079730068,
+      "hybrid_advtrain:hybrid+advtrain": 0.9460134966258436,
+      "mlp:mlp": 0.8060484878780305
+    },
+    {
+      "crafted_on": "hybrid_advtrain:hybrid+advtrain",
+      "cnn1d:cnn1d": 0.7168207948012997,
+      "hybrid:hybrid": 0.8907773056735816,
+      "hybrid_advtrain:hybrid+advtrain": 0.9375156210947263,
+      "mlp:mlp": 0.9032741814546363
+    },
+    {
+      "crafted_on": "mlp:mlp",
+      "cnn1d:cnn1d": 0.9410147463134216,
+      "hybrid:hybrid": 0.8617845538615346,
+      "hybrid_advtrain:hybrid+advtrain": 0.9540114971257185,
+      "mlp:mlp": 0.588352911772057
+    }
+  ]
+}

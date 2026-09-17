@@ -1,0 +1,4 @@
+actual,benign,malicious_plain,malicious_obfuscated
+benign,1300,0,61
+malicious_plain,3,1317,0
+malicious_obfuscated,29,47,1244
