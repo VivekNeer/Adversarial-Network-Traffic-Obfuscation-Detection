@@ -119,7 +119,11 @@ if (H && A && curve(H, "domain-constrained", 0.1) != null) {
 }
 for (const m of [H, A]) {
   const pa = m && m.attack && m.attack.packet_attack;
-  if (pa) body.push(P(`Packet-space attack, ${NAMES[m.name]}: ${pct(pa.evasion_after)} of ${pa.n_flows} malicious flows could be walked to a benign verdict with legal edits within ${pa.max_queries} queries (${pct(pa.evasion_before)} were misread untouched), at a mean byte overhead of ${pct(pa.mean_overhead)}.`));
+  if (pa) body.push(P(`Packet-space black-box attack, ${NAMES[m.name]}: of ${pa.n_flows} freshly generated malicious flows, ${pct(pa.evasion_before)} were read as benign untouched and ${pct(pa.evasion_after)} could be walked across the boundary with legal pad/delay edits within ${pa.max_queries} queries, at a mean byte overhead of ${pct(pa.mean_overhead)} and ${pa.mean_queries_to_evade.toFixed(0)} queries per successful evasion.`));
+}
+if (H && A && H.attack && A.attack && H.attack.packet_attack && A.attack.packet_attack) {
+  const h = H.attack.packet_attack, a = A.attack.packet_attack;
+  body.push(P(`Adversarial training does not transfer to this attack: the packet-space evasion rate is ${pct(h.evasion_after)} for the undefended hybrid and ${pct(a.evasion_after)} for the defended one, while the same defense cut gradient-PGD evasion by more than half. The training attack lives in feature space under an L-infinity budget; the packet-space search moves along a different path (a few large pads and delays on a subset of packets) that the defended model never saw. The two attacks measure different things, and a defense evaluated against only the attack it was trained on would have looked far better than it is. The attacker's price is the other half of the result: the successful evasions cost on average ${pct(a.mean_overhead)} extra bytes, so a detector that forces an exfiltration channel to nearly double its volume has still raised the attacker's cost substantially even where it is eventually evaded.`));
 }
 if (H && H.evaluation && H.evaluation.transfer_matrix) {
   const tm = H.evaluation.transfer_matrix; const cols = Object.keys(tm[0]).filter((k) => k !== "crafted_on"); const short = (s) => s.split(":")[0];

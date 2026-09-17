@@ -243,5 +243,14 @@
       "attacked_accuracy": 0.6985753561609598,
       "evasion_rate": 0.059848484848484845
     }
-  ]
+  ],
+  "packet_attack": {
+    "n_flows": 198,
+    "evasion_before": 0.020202020202020204,
+    "evasion_after": 0.10101010101010101,
+    "mean_queries_to_evade": 30.8125,
+    "mean_overhead": 0.7826817271591605,
+    "mean_delay_added_s": 11.099848004924933,
+    "max_queries": 150
+  }
 }

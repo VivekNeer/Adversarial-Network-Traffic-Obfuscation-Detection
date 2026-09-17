@@ -39,6 +39,12 @@ Honest list of what is missing, what is weak, and what would be worth doing next
 - **Black-box search is greedy.** The packet-space attack accepts any edit that
   raises the benign probability; a smarter search (NES, SimBA) would evade with
   fewer queries and less overhead, so its evasion rate is a lower bound.
+- **Adversarial training does not carry over to the packet-space attack.**
+  Packet-space evasion is 10.1% undefended vs 10.6% defended, although the same
+  defense more than halves gradient-PGD evasion. The training attack is a
+  feature-space L-inf perturbation; the packet-space search takes a different
+  path (few large pads/delays). Training against packet-space examples, or a
+  mixture, is the obvious next defense experiment.
 - **Adversarial training against a single attack config.** The defended model is
   trained against PGD-5 on both surfaces. Robustness to attacks with a
   different norm, surface or step schedule is not measured.
@@ -63,7 +69,7 @@ Honest list of what is missing, what is weak, and what would be worth doing next
 ### Models
 - Attention or a small transformer over the packet sequence, to test whether
   position-aware models beat convolution on long-range cadence.
-- [x] Bidirectional GRU (`gru`, packed to true length so padding never leaks in) — `configs/gru.yaml`.
+- [x] Bidirectional GRU (`gru`, packed to true length so padding never leaks in) — `configs/gru.yaml`. Result: 92.9% accuracy / 88.1% obfuscated recall, below the CNN (94.1%); order and long-range context do not beat convolution here, and PGD through the recurrence is ~10x slower.
 - [x] Sliding-window inference for flows longer than 128 packets (`antod/inference.py`).
 - [x] Calibration (temperature scaling + ECE) — `antod/calibration.py`, reported in `metrics.json`.
 

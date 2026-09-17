@@ -1,6 +1,7 @@
-| crafted_on | cnn1d:cnn1d | hybrid:hybrid | hybrid_advtrain:hybrid+advtrain | mlp:mlp |
-| --- | --- | --- | --- | --- |
-| cnn1d:cnn1d | 0.5119 | 0.9585 | 0.9623 | 0.9618 |
-| hybrid:hybrid | 0.5911 | 0.7276 | 0.9460 | 0.8060 |
-| hybrid_advtrain:hybrid+advtrain | 0.7168 | 0.8908 | 0.9375 | 0.9033 |
-| mlp:mlp | 0.9410 | 0.8618 | 0.9540 | 0.5884 |
+| crafted_on | cnn1d:cnn1d | gru:gru | hybrid:hybrid | hybrid_advtrain:hybrid+advtrain | mlp:mlp |
+| --- | --- | --- | --- | --- | --- |
+| cnn1d:cnn1d | 0.5300 | 0.5450 | 0.9640 | 0.9680 | 0.9700 |
+| gru:gru | 0.5840 | 0.4780 | 0.9650 | 0.9680 | 0.9700 |
+| hybrid:hybrid | 0.6090 | 0.5640 | 0.7360 | 0.9550 | 0.8090 |
+| hybrid_advtrain:hybrid+advtrain | 0.7100 | 0.6160 | 0.9040 | 0.9510 | 0.9120 |
+| mlp:mlp | 0.9430 | 0.9230 | 0.8670 | 0.9610 | 0.6010 |

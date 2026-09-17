@@ -26,31 +26,43 @@
   "transfer_matrix": [
     {
       "crafted_on": "cnn1d:cnn1d",
-      "cnn1d:cnn1d": 0.511872031992002,
-      "hybrid:hybrid": 0.9585103724068983,
-      "hybrid_advtrain:hybrid+advtrain": 0.9622594351412147,
-      "mlp:mlp": 0.9617595601099725
+      "cnn1d:cnn1d": 0.53,
+      "gru:gru": 0.545,
+      "hybrid:hybrid": 0.964,
+      "hybrid_advtrain:hybrid+advtrain": 0.968,
+      "mlp:mlp": 0.97
+    },
+    {
+      "crafted_on": "gru:gru",
+      "cnn1d:cnn1d": 0.584,
+      "gru:gru": 0.478,
+      "hybrid:hybrid": 0.965,
+      "hybrid_advtrain:hybrid+advtrain": 0.968,
+      "mlp:mlp": 0.97
     },
     {
       "crafted_on": "hybrid:hybrid",
-      "cnn1d:cnn1d": 0.591102224443889,
-      "hybrid:hybrid": 0.7275681079730068,
-      "hybrid_advtrain:hybrid+advtrain": 0.9460134966258436,
-      "mlp:mlp": 0.8060484878780305
+      "cnn1d:cnn1d": 0.609,
+      "gru:gru": 0.564,
+      "hybrid:hybrid": 0.736,
+      "hybrid_advtrain:hybrid+advtrain": 0.955,
+      "mlp:mlp": 0.809
     },
     {
       "crafted_on": "hybrid_advtrain:hybrid+advtrain",
-      "cnn1d:cnn1d": 0.7168207948012997,
-      "hybrid:hybrid": 0.8907773056735816,
-      "hybrid_advtrain:hybrid+advtrain": 0.9375156210947263,
-      "mlp:mlp": 0.9032741814546363
+      "cnn1d:cnn1d": 0.71,
+      "gru:gru": 0.616,
+      "hybrid:hybrid": 0.904,
+      "hybrid_advtrain:hybrid+advtrain": 0.951,
+      "mlp:mlp": 0.912
     },
     {
       "crafted_on": "mlp:mlp",
-      "cnn1d:cnn1d": 0.9410147463134216,
-      "hybrid:hybrid": 0.8617845538615346,
-      "hybrid_advtrain:hybrid+advtrain": 0.9540114971257185,
-      "mlp:mlp": 0.588352911772057
+      "cnn1d:cnn1d": 0.943,
+      "gru:gru": 0.923,
+      "hybrid:hybrid": 0.867,
+      "hybrid_advtrain:hybrid+advtrain": 0.961,
+      "mlp:mlp": 0.601
     }
   ]
 }

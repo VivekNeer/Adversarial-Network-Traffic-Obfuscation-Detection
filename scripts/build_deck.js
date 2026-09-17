@@ -288,10 +288,12 @@ function note(slide, text) {
   const h = byName.hybrid_advtrain || byName.hybrid;
   const pa = h && h.attack && h.attack.packet_attack;
   s.addText("Packet-space black-box attack", { x: 0.5, y: 1.15, w: 4.4, h: 0.4, fontFace: FONT_B, fontSize: 14, bold: true, color: NAVY, isTextBox: true, margin: 0 });
+  const paH = byName.hybrid && byName.hybrid.attack && byName.hybrid.attack.packet_attack;
   if (pa) {
     stat(s, 0.5, 1.6, 2.1, pct(pa.evasion_after, 0), "malicious flows walked to 'benign'\nwith legal pad/delay edits", ORANGE);
     stat(s, 2.7, 1.6, 2.1, pct(pa.mean_overhead, 0), "extra bytes the attacker\nhad to pay, on average", BLUE);
-    s.addText(`${h.name}: ${pa.n_flows} flows, ≤${pa.max_queries} queries each, ${pa.mean_queries_to_evade.toFixed(0)} queries per successful evasion on average.`, { x: 0.5, y: 3.2, w: 4.3, h: 0.9, fontFace: FONT_B, fontSize: 11, color: MUTED, isTextBox: true, margin: 0 });
+    const cmp = paH && h.name === "hybrid_advtrain" ? ` Undefended hybrid: ${pct(paH.evasion_after, 0)} - adversarial training did not help against this search, unlike gradient PGD.` : "";
+    s.addText(`${h.name}: ${pa.n_flows} flows, <=${pa.max_queries} queries each, ${pa.mean_queries_to_evade.toFixed(0)} queries per successful evasion.${cmp}`, { x: 0.5, y: 3.2, w: 4.3, h: 0.95, fontFace: FONT_B, fontSize: 10.5, color: MUTED, isTextBox: true, margin: 0 });
   } else {
     s.addText("Run antod attack to populate.", { x: 0.5, y: 1.6, w: 4.3, h: 0.5, fontFace: FONT_B, fontSize: 12, color: MUTED, isTextBox: true, margin: 0 });
   }

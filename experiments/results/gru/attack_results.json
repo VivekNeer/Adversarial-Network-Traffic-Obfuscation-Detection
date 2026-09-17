@@ -1,0 +1,256 @@
+{
+  "clean": {
+    "accuracy": 0.93,
+    "macro_f1": 0.92954765863644,
+    "weighted_f1": 0.9295814503427584,
+    "obfuscated_recall": 0.8909090909090909,
+    "malicious_recall": 0.9848484848484849,
+    "false_positive_rate": 0.1,
+    "roc_auc_macro": 0.9849316696375521,
+    "per_class": {
+      "benign": {
+        "precision": 0.9683544303797469,
+        "recall": 0.9,
+        "f1": 0.9329268292682927,
+        "support": 170.0
+      },
+      "malicious_plain": {
+        "precision": 0.9269662921348315,
+        "recall": 1.0,
+        "f1": 0.9620991253644315,
+        "support": 165.0
+      },
+      "malicious_obfuscated": {
+        "precision": 0.8963414634146342,
+        "recall": 0.8909090909090909,
+        "f1": 0.8936170212765957,
+        "support": 165.0
+      }
+    },
+    "confusion": [
+      [
+        153,
+        0,
+        17
+      ],
+      [
+        0,
+        165,
+        0
+      ],
+      [
+        5,
+        13,
+        147
+      ]
+    ],
+    "n_samples": 500
+  },
+  "sweep": [
+    {
+      "attack": "clean",
+      "accuracy": 0.93,
+      "macro_f1": 0.92954765863644,
+      "obfuscated_recall": 0.8909090909090909,
+      "malicious_recall": 0.9848484848484849,
+      "false_positive_rate": 0.1,
+      "evasion_rate": 0.0,
+      "stats_linf": 0.0,
+      "seq_linf": 0.0
+    },
+    {
+      "attack": "fgsm seq eps=0.05 constrained",
+      "accuracy": 0.602,
+      "macro_f1": 0.5673703631902989,
+      "obfuscated_recall": 0.8606060606060606,
+      "malicious_recall": 0.9696969696969697,
+      "false_positive_rate": 0.22941176470588234,
+      "evasion_rate": 0.030303030303030304,
+      "stats_linf": 0.0,
+      "seq_linf": 0.050000011920928955
+    },
+    {
+      "attack": "fgsm seq eps=0.1 constrained",
+      "accuracy": 0.508,
+      "macro_f1": 0.4502815126254885,
+      "obfuscated_recall": 0.8303030303030303,
+      "malicious_recall": 0.9545454545454546,
+      "false_positive_rate": 0.35294117647058826,
+      "evasion_rate": 0.045454545454545456,
+      "stats_linf": 0.0,
+      "seq_linf": 0.10000002384185791
+    },
+    {
+      "attack": "pgd seq eps=0.05 steps=10 constrained",
+      "accuracy": 0.57,
+      "macro_f1": 0.5277699198491278,
+      "obfuscated_recall": 0.8606060606060606,
+      "malicious_recall": 0.9696969696969697,
+      "false_positive_rate": 0.27647058823529413,
+      "evasion_rate": 0.030303030303030304,
+      "stats_linf": 0.0,
+      "seq_linf": 0.050000011920928955
+    },
+    {
+      "attack": "pgd seq eps=0.1 steps=10 constrained",
+      "accuracy": 0.486,
+      "macro_f1": 0.4197874266201273,
+      "obfuscated_recall": 0.8181818181818182,
+      "malicious_recall": 0.9515151515151515,
+      "false_positive_rate": 0.37058823529411766,
+      "evasion_rate": 0.048484848484848485,
+      "stats_linf": 0.0,
+      "seq_linf": 0.10000002384185791
+    },
+    {
+      "attack": "pgd seq eps=0.2 steps=20 constrained",
+      "accuracy": 0.418,
+      "macro_f1": 0.37229388006490666,
+      "obfuscated_recall": 0.703030303030303,
+      "malicious_recall": 0.9030303030303031,
+      "false_positive_rate": 0.45294117647058824,
+      "evasion_rate": 0.09696969696969697,
+      "stats_linf": 0.0,
+      "seq_linf": 0.20000001788139343
+    },
+    {
+      "attack": "pgd seq eps=0.1 steps=10 unconstrained",
+      "accuracy": 0.35,
+      "macro_f1": 0.32106778574342837,
+      "obfuscated_recall": 0.49696969696969695,
+      "malicious_recall": 0.8848484848484849,
+      "false_positive_rate": 0.45294117647058824,
+      "evasion_rate": 0.11515151515151516,
+      "stats_linf": 0.0,
+      "seq_linf": 0.10000002384185791
+    },
+    {
+      "attack": "pgd seq eps=0.1 steps=10 constrained targeted",
+      "accuracy": 0.696,
+      "macro_f1": 0.6586443870926629,
+      "obfuscated_recall": 0.8909090909090909,
+      "malicious_recall": 0.9454545454545454,
+      "false_positive_rate": 0.058823529411764705,
+      "evasion_rate": 0.05454545454545454,
+      "stats_linf": 0.0,
+      "seq_linf": 0.10000002384185791
+    }
+  ],
+  "robustness_curves": {
+    "domain-constrained": {
+      "eps": [
+        0.0,
+        0.02,
+        0.05,
+        0.1,
+        0.2,
+        0.3
+      ],
+      "value": [
+        0.93,
+        0.806,
+        0.57,
+        0.486,
+        0.418,
+        0.382
+      ]
+    },
+    "unconstrained": {
+      "eps": [
+        0.0,
+        0.02,
+        0.05,
+        0.1,
+        0.2,
+        0.3
+      ],
+      "value": [
+        0.93,
+        0.736,
+        0.474,
+        0.35,
+        0.168,
+        0.07
+      ]
+    }
+  },
+  "evasion_curves": {
+    "untargeted": {
+      "eps": [
+        0.0,
+        0.02,
+        0.05,
+        0.1,
+        0.2,
+        0.3
+      ],
+      "value": [
+        0.015151515151515152,
+        0.021212121212121213,
+        0.030303030303030304,
+        0.048484848484848485,
+        0.09393939393939393,
+        0.11212121212121212
+      ]
+    },
+    "targeted at benign": {
+      "eps": [
+        0.0,
+        0.02,
+        0.05,
+        0.1,
+        0.2,
+        0.3
+      ],
+      "value": [
+        0.015151515151515152,
+        0.021212121212121213,
+        0.03333333333333333,
+        0.05454545454545454,
+        0.09696969696969697,
+        0.1303030303030303
+      ]
+    }
+  },
+  "smoothing": [
+    {
+      "sigma": 0.0,
+      "clean_accuracy": 0.93,
+      "attacked_accuracy": 0.486,
+      "evasion_rate": 0.048484848484848485
+    },
+    {
+      "sigma": 0.02,
+      "clean_accuracy": 0.93,
+      "attacked_accuracy": 0.486,
+      "evasion_rate": 0.048484848484848485
+    },
+    {
+      "sigma": 0.05,
+      "clean_accuracy": 0.93,
+      "attacked_accuracy": 0.49,
+      "evasion_rate": 0.045454545454545456
+    },
+    {
+      "sigma": 0.1,
+      "clean_accuracy": 0.926,
+      "attacked_accuracy": 0.492,
+      "evasion_rate": 0.048484848484848485
+    },
+    {
+      "sigma": 0.2,
+      "clean_accuracy": 0.884,
+      "attacked_accuracy": 0.494,
+      "evasion_rate": 0.06666666666666667
+    }
+  ],
+  "packet_attack": {
+    "n_flows": 198,
+    "evasion_before": 0.045454545454545456,
+    "evasion_after": 0.1919191919191919,
+    "mean_queries_to_evade": 50.89655172413793,
+    "mean_overhead": 0.7817371111889375,
+    "mean_delay_added_s": 32.722867604728,
+    "max_queries": 150
+  }
+}

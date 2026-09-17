@@ -1,27 +1,27 @@
 {
   "per_technique_recall": {
-    "block_padding": 0.9925,
-    "random_padding": 0.9325,
-    "fragmentation": 0.6525,
-    "timing_jitter": 0.6925,
-    "constant_rate_shaping": 0.9675,
-    "dummy_injection": 0.9025,
-    "tunnel_encapsulation": 0.9075,
-    "protocol_mimicry": 0.9775
+    "block_padding": 0.62,
+    "random_padding": 0.8125,
+    "fragmentation": 0.6325,
+    "timing_jitter": 0.77,
+    "constant_rate_shaping": 0.89,
+    "dummy_injection": 0.9175,
+    "tunnel_encapsulation": 0.8,
+    "protocol_mimicry": 0.9425
   },
   "per_profile_accuracy": {
-    "brute_force": 0.9487750556792873,
-    "c2_beacon": 0.9732739420935412,
-    "data_exfiltration": 0.9977777777777778,
-    "ddos_flood": 0.9733009708737864,
-    "dns_query": 0.92,
-    "file_download": 0.9849624060150376,
-    "port_scan": 0.9906103286384976,
-    "reverse_shell": 0.9383259911894273,
-    "ssh_interactive": 0.9372822299651568,
-    "video_streaming": 0.988929889298893,
-    "voip": 0.9256505576208178,
-    "web_browsing": 0.9423868312757202
+    "brute_force": 0.8864142538975501,
+    "c2_beacon": 0.9265033407572383,
+    "data_exfiltration": 0.9911111111111112,
+    "ddos_flood": 0.9441747572815534,
+    "dns_query": 0.08,
+    "file_download": 0.9624060150375939,
+    "port_scan": 0.9741784037558685,
+    "reverse_shell": 0.8832599118942731,
+    "ssh_interactive": 0.9581881533101045,
+    "video_streaming": 0.974169741697417,
+    "voip": 0.8921933085501859,
+    "web_browsing": 0.8888888888888888
   },
   "transfer_matrix": [
     {

@@ -57,6 +57,7 @@ boundary, and adversarial training that hardens the model against them.
 | --- | --- | --- | --- |
 | **1D-CNN** | packet sequence `(4, 128)` | ~126k | Headline model — reads *where* in the flow obfuscation happens |
 | **MLP** | 51 flow statistics | ~56k | Ablation — does the convolution earn its cost? |
+| **Bi-GRU** | packet sequence `(4, 128)` | ~50k | Second sequence baseline — does order/long-range context matter? |
 | **Hybrid** | both | ~149k | Are the two views complementary? |
 | Random forest / RBF-SVM / logistic regression | 51 flow statistics | — | Classical baselines; RF also gives feature importances |
 
@@ -139,7 +140,24 @@ feature arrays, not on live sockets. This is a defensive research tool for
 producing labelled training data and measuring detector robustness; it is not an
 evasion utility.
 
-## 5. Where things are
+## 5. Headline results (seed 42, 20k flows)
+
+| Model | Accuracy | Obf. recall | PGD ε=0.1 (constrained) | Packet-space evasion |
+| --- | --- | --- | --- | --- |
+| Random forest | 97.2% | 94.9% | — | — |
+| 1D-CNN | 94.1% | 88.6% | 51.2% | 14.1% |
+| Bi-GRU | 92.9% | 88.1% | 48.6% | 19.2% |
+| MLP | 96.2% | 93.1% | 58.8% | 9.1% |
+| Hybrid | 96.9% | 94.2% | 72.8% | 10.1% |
+| Hybrid + adversarial training | 96.5% | 94.2% | 93.8% | 10.6% |
+
+Hardest obfuscation technique: fragmentation (65% recall). Adversarial training
+costs 0.4 points of clean accuracy, lifts constrained-PGD accuracy at ε=0.1 from
+72.8% to 93.8%, but does not help against the packet-space black-box attack.
+At 99% benign prevalence the defended hybrid's FPR translates to ~18% precision
+(444 false alerts per 10k flows) — the deployment-relevant number.
+
+## 6. Where things are
 
 - Codebase walkthrough: [CODEBASE.md](CODEBASE.md)
 - How to run: [RUNNING.md](RUNNING.md)
