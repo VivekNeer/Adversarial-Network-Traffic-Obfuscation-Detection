@@ -71,7 +71,11 @@ python scripts/seed_variance.py configs/hybrid.yaml --seeds 1 2 3
 ```
 
 The transfer matrix in `evaluate` only appears once at least two checkpoints
-exist under `experiments/results/`.
+exist under `experiments/results/`. It runs on a stratified 1,000-flow subsample
+of the test split (`output.transfer_flows`); attack sweeps use every test flow
+unless `output.attack_flows` is set (the GRU config sets 500, because PGD
+through the recurrence costs minutes per run on CPU). Clean metrics always use
+the whole test split.
 
 ## 4. Where the outputs go
 
