@@ -24,6 +24,12 @@ On Windows without activating the venv, prefix commands with
 `.venv\Scripts\python.exe -m` (e.g. `.venv\Scripts\python.exe -m antod.cli ...`).
 The examples below assume the venv is active.
 
+To reproduce the reported numbers exactly, install the pinned versions instead:
+
+```bash
+uv pip install -r requirements-lock.txt -e ".[dev]"
+```
+
 Check everything works:
 
 ```bash

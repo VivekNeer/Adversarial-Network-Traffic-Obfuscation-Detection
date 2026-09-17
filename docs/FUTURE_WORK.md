@@ -83,8 +83,7 @@ Honest list of what is missing, what is weak, and what would be worth doing next
 - [x] Per-flow predictions (`predictions.csv`) written by `antod train`.
 - [x] `antod predict --input packets.csv` scores a new per-packet CSV with a checkpoint.
 - [x] CI workflow (`.github/workflows/ci.yml`): ruff + pytest + quick smoke run on 3.11/3.12.
-- Pin dependency versions in `pyproject.toml` once the final run is done, so the
-  reported numbers stay reproducible.
+- [x] Exact versions pinned in `requirements-lock.txt` (pyproject keeps loose bounds).
 
 ### Report
 - Literature survey of ≥20 recent papers (report template requirement).
