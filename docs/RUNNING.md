@@ -60,8 +60,15 @@ antod attack   -c configs/cnn1d.yaml          # FGSM/PGD sweep, robustness curve
 antod evaluate -c configs/cnn1d.yaml          # per-technique recall, per-profile, transfer
 ```
 
-Repeat `train`/`attack`/`evaluate` for `mlp.yaml`, `hybrid.yaml`,
+Repeat `train`/`attack`/`evaluate` for `mlp.yaml`, `hybrid.yaml`, `gru.yaml`,
 `hybrid_advtrain.yaml`. `antod all -c <config>` chains the last three.
+
+Seed variance (mean ± std over three seeds, needed before claiming one model
+beats another):
+
+```bash
+python scripts/seed_variance.py configs/hybrid.yaml --seeds 1 2 3
+```
 
 The transfer matrix in `evaluate` only appears once at least two checkpoints
 exist under `experiments/results/`.
@@ -71,15 +78,18 @@ exist under `experiments/results/`.
 Each config writes to its `output.dir` (default `experiments/results/<name>/`):
 
 ```
-metrics.json            clean test metrics, val metrics, baselines, feature importances
-attack_results.json     attack sweep rows, robustness/evasion curves, smoothing sweep
+metrics.json            clean test metrics, val metrics, baselines, feature importances,
+                        calibration (temperature, ECE), precision at 90/99/99.9% benign
+predictions.csv         one row per test flow: profile, recipe, true, predicted, probabilities
+attack_results.json     attack sweep rows, robustness/evasion curves, smoothing sweep,
+                        packet-space black-box attack summary
 evaluation.json         per-technique recall, per-profile accuracy, transfer matrix
 checkpoint.pt           weights + fitted scaler + config
 config.yaml             the resolved config that produced these results
 figures/                confusion_matrix, training_curves, model_comparison,
                         feature_importance, robustness_constrained, evasion_rate,
                         per_technique_recall, per_profile_accuracy  (.png + .csv)
-tables/                 model_comparison, attack_sweep, smoothing,
+tables/                 model_comparison, attack_sweep, smoothing, packet_attack,
                         per_technique_recall, per_profile_accuracy, transfer_matrix  (.md)
 ```
 
@@ -98,7 +108,7 @@ antod train -c configs/hybrid.yaml --device cpu
 
 Flags: `--name`, `--out`, `--epochs`, `--model`, `--n-flows`, `--seed`, `--device`.
 
-Available models: `cnn1d`, `cnn1d_small`, `mlp`, `mlp_wide`, `hybrid`.
+Available models: `cnn1d`, `cnn1d_small`, `mlp`, `mlp_wide`, `hybrid`, `gru`.
 Available baselines: `random_forest`, `rbf_svm`, `logistic_regression`.
 
 ## 6. Using your own captures
@@ -120,6 +130,15 @@ dataset:
 
 Add a `label` column (`benign`, `portscan`, `dos hulk`, …) if you have one.
 Details in [DATA.md](DATA.md).
+
+To score a capture with an already-trained model (no labels needed):
+
+```bash
+antod predict -c configs/hybrid.yaml --input data/raw/packets.csv --predictions-out scored.csv
+```
+
+For flows longer than 128 packets, `antod.inference.score_flow_windows` slides
+the window across the whole flow and combines the per-window verdicts.
 
 ## 7. Using the code directly
 

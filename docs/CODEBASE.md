@@ -41,6 +41,7 @@ pyproject.toml          dependencies, `antod` console script, ruff/pytest config
 | `base.py` | `FlowClassifier` ABC: every model takes `(seq, stats)` and ignores what it doesn't use, and declares `uses_seq` / `uses_stats` (tested against real gradient flow). `@register` / `build_model(name)` registry. |
 | `cnn1d.py` | `ConvBlock` (conv → BN → ReLU → pool → dropout), `SequenceTrunk` (three conv stages + average *and* max pooling over time), `CNN1D` (trunk + head). Registered as `cnn1d` and `cnn1d_small`. |
 | `mlp.py` | `MLP` over the 51 statistics (`mlp`, `mlp_wide`) and `HybridCNNMLP` (`hybrid`) which joins a `SequenceTrunk` and a statistics trunk at the head. |
+| `rnn.py` | `GRUClassifier` (`gru`): bidirectional GRU packed to each flow's true length so padding never leaks into the state, masked-mean pooled. |
 | `baselines.py` | `SklearnBaseline` wrapper with `feature_importance()`; factories `random_forest`, `rbf_svm` (calibrated via `CalibratedClassifierCV`), `logistic_regression`; `build_baseline(name)`. |
 
 ## `src/antod/train.py` — training loop
@@ -57,6 +58,7 @@ and config together.
 | File | What it does |
 | --- | --- |
 | `attacks.py` | `AttackConfig` (fgsm/pgd, surface seq/stats/both, eps, steps, constrained, targeted). `sequence_bounds` builds the one-sided box: size magnitude may only grow, log-IAT may only increase, direction and mask frozen, padding slots frozen. `stats_bounds` does the same for statistics via `FeatureConstraints`. `run_attack` is the PGD/FGSM loop with projection onto eps-ball ∩ domain box; it refuses to perturb a surface the model doesn't read. `make_adversary` binds a config for the trainer. `perturbation_norms` reports how big the perturbation was. |
+| `packet_attack.py` | Packet-space black-box attack: greedy hill-climb over pad/delay edits on the raw packet array, re-extracting features after each proposal and querying only output probabilities. `evaluate_packet_attack` reports evasion before/after, queries and byte overhead. |
 | `defenses.py` | `adversarial_training` (builds an adversary, hands it to `Trainer`), `smoothed_predict` (randomised smoothing — majority vote over Gaussian-noised copies; never touches direction/mask/padding), `DefenseConfig`. |
 
 ## `src/antod/evaluate.py` — answering the real questions
@@ -67,11 +69,19 @@ and config together.
 `per_profile_accuracy`, `per_recipe_accuracy`, `transfer_matrix`,
 `smoothing_sweep`, `fit_baselines` / `evaluate_baselines`.
 
+## `src/antod/calibration.py` and `inference.py`
+
+`calibration.py`: temperature scaling fitted on validation logits plus expected
+calibration error before/after — makes the probabilities honest without changing
+the argmax. `inference.py`: `score_flow_windows` slides the 128-packet window
+across a flow of any length and combines per-window predictions (`mean` or
+`max_malicious`).
+
 ## `src/antod/utils/`
 
 | File | What it does |
 | --- | --- |
-| `metrics.py` | `Metrics` dataclass and `compute_metrics`: accuracy, macro/weighted F1, per-class P/R/F1, confusion matrix, macro AUC, plus `obfuscated_recall`, `malicious_recall` (classes 1+2 collapsed) and `false_positive_rate`. `recall_by_group` for per-technique/profile breakdowns. |
+| `metrics.py` | `Metrics` dataclass and `compute_metrics`: accuracy, macro/weighted F1, per-class P/R/F1, confusion matrix, macro AUC, plus `obfuscated_recall`, `malicious_recall` (classes 1+2 collapsed) and `false_positive_rate`. `recall_by_group` for per-technique/profile breakdowns; `precision_at_base_rate` re-weights to 90/99/99.9% benign prevalence. |
 | `plots.py` | Matplotlib figures: confusion matrix, training curves (two panels, never a twin axis), robustness curves, ranked horizontal bars, model comparison. Validated 3-hue palette, direct labels, a CSV written beside every PNG. |
 | `common.py` | `set_seed`, `get_logger`, `pick_device`, `save_json`/`load_json`, `format_table`, `write_markdown_table`. |
 
@@ -82,11 +92,15 @@ split / train / defense / attacks / output). Unknown keys are a hard error so a
 typo can't silently run at defaults.
 
 `cli.py` is the `antod` command: `generate`, `train`, `attack`, `evaluate`,
-`all`, each driven by `--config`. Outputs go to `output.dir` as `metrics.json`,
+`all`, `predict` (score an unlabelled per-packet CSV), each driven by `--config`. Outputs go to `output.dir` as `metrics.json`,
 `attack_results.json`, `evaluation.json`, `checkpoint.pt`, `config.yaml`,
 `figures/*.png(+csv)`, `tables/*.md`.
 
-## `scripts/run_all.py`
+## `scripts/`
+
+`seed_variance.py` re-runs a config under several seeds and reports mean ± std.
+
+### `run_all.py`
 
 Runs generate → train ×4 → attack ×4 → evaluate ×4 in that order (the transfer
 matrix needs every checkpoint first). `--quick` does a 2k-flow / 4-epoch smoke
@@ -100,6 +114,8 @@ run into `experiments/runs/quick_*`.
 | `test_features.py` | Both views, scaler round-trip, `FeatureConstraints`, splits, loaders, persistence. |
 | `test_models.py` | Shapes, gradient routing vs declared surfaces, dead-parameter check, eval determinism, baselines. |
 | `test_attacks.py` | Pad-only/delay-only invariants, eps-ball, domain box, unconstrained ≥ constrained, targeted attacks, surface routing, smoothing. |
+| `test_inference.py` | Calibration/ECE, base-rate precision, sliding-window inference. |
+| `test_packet_attack.py` | Packet-space attack legality and monotonicity, GRU padding invariance. |
 | `test_train.py` | Trainer, early stopping, best-weights restore, adversarial training, checkpoints, config parsing, metrics semantics. |
 
 Run with `pytest` (or `python -m pytest`) from the repo root.
