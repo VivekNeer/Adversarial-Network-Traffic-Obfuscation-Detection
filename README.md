@@ -86,6 +86,14 @@ The obfuscation transforms in this repository operate on *extracted flow feature
 packet records*, not on live sockets. They exist to generate labelled training data for a detector
 and to measure its robustness. This is a defensive research tool; it is not an evasion utility.
 
+## Documentation
+
+- [docs/PROJECT.md](docs/PROJECT.md) — what the project is, in detail
+- [docs/CODEBASE.md](docs/CODEBASE.md) — what every file does
+- [docs/RUNNING.md](docs/RUNNING.md) — setup and how to run everything
+- [docs/DATA.md](docs/DATA.md) — data formats and using real captures
+- [docs/FUTURE_WORK.md](docs/FUTURE_WORK.md) — gaps and next steps
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
