@@ -1,0 +1,37 @@
+# Hybrid trained at a realistic prevalence (90% benign) instead of balanced thirds.
+# Compare its FPR and base-rate precision against hybrid.yaml.
+name: hybrid_realistic
+seed: 42
+
+dataset:
+  source: synthetic
+  path: data/processed/dataset_realistic.npz
+  n_flows: 20000
+  seed: 42
+  class_weights: [0.90, 0.05, 0.05]
+  benign_obfuscation_rate: 0.35
+
+train:
+  model: hybrid
+  epochs: 60
+  batch_size: 128
+  lr: 0.001
+  patience: 12
+  selection_metric: macro_f1
+
+defense:
+  method: none
+
+baselines: [random_forest]
+
+attacks:
+  - {name: fgsm, surface: both, eps: 0.05}
+  - {name: fgsm, surface: both, eps: 0.1}
+  - {name: pgd, surface: both, eps: 0.05, steps: 10}
+  - {name: pgd, surface: both, eps: 0.1, steps: 10}
+  - {name: pgd, surface: both, eps: 0.2, steps: 20}
+  - {name: pgd, surface: both, eps: 0.1, steps: 10, constrained: false}
+  - {name: pgd, surface: both, eps: 0.1, steps: 10, targeted: true}
+
+output:
+  dir: experiments/results/hybrid_realistic

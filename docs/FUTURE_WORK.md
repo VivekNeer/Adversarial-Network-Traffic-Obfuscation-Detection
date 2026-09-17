@@ -58,7 +58,7 @@ Honest list of what is missing, what is weak, and what would be worth doing next
 - More transforms: packet reordering, flow splitting across connections,
   domain fronting, traffic morphing with learned target distributions.
 - [x] Base-rate-adjusted precision and alerts-per-10k at 90/99/99.9% benign (`precision_at_base_rate`, in `metrics.json`).
-- Training at realistic base rates (e.g. 95/3/2) rather than only re-weighting at evaluation.
+- [~] Training at realistic base rates: `configs/hybrid_realistic.yaml` (90/5/5) is ready; not yet run.
 
 ### Models
 - Attention or a small transformer over the packet sequence, to test whether
@@ -72,8 +72,8 @@ Honest list of what is missing, what is weak, and what would be worth doing next
 - Stronger black-box search (NES / SimBA-style) — the current attack is a greedy hill-climb.
 - Certified robustness via randomised smoothing bounds (Cohen et al.) rather than
   just the empirical majority vote.
-- TRADES / MART loss instead of plain PGD adversarial training, and a sweep over
-  `adv_ratio`.
+- TRADES / MART loss instead of plain PGD adversarial training.
+- [~] `adv_ratio` sweep: `scripts/adv_ratio_sweep.py` is ready; not yet run (five trainings, ~1 h CPU).
 - Detection of adversarial examples themselves (input reconstruction error,
   feature-squeezing disagreement).
 
