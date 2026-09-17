@@ -105,6 +105,14 @@ for (const m of [H, A]) {
   if (!m || !m.attack) continue;
   body.push(Tbl(["Attack", "Accuracy", "Obf. recall", "Evasion rate"], m.attack.sweep.map((r) => [r.attack, f4(r.accuracy), f4(r.obfuscated_recall), f4(r.evasion_rate)]), [4500, 1500, 1500, 1500]), Caption(`Table ${m === H ? 3 : 4}: Attack sweep, ${NAMES[m.name]}.`));
 }
+// untargeted vs targeted: the attacker does not control benign traffic
+for (const m of [H]) {
+  const sw = m && m.attack && m.attack.sweep;
+  if (!sw) continue;
+  const un = sw.find((r) => r.attack.includes("eps=0.1") && r.attack.includes("pgd") && r.attack.includes("constrained") && !r.attack.includes("unconstrained") && !r.attack.includes("targeted"));
+  const ta = sw.find((r) => r.attack.includes("eps=0.1") && r.attack.includes("targeted"));
+  if (un && ta) body.push(P(`Untargeted versus targeted. The untargeted PGD numbers overstate the operational threat in a specific way: at ε = 0.1 the ${NAMES[m.name]} keeps ${pct(un.malicious_recall)} malicious recall while its false-positive rate rises to ${pct(un.false_positive_rate)}, so most of the lost accuracy comes from benign flows being pushed to look obfuscated. A real attacker does not control benign traffic. The targeted attack, which pushes malicious flows towards the benign class and is what an evader actually wants, leaves malicious recall at ${pct(ta.malicious_recall)} with an evasion rate of ${pct(ta.evasion_rate)}. Evasion rate, not accuracy, is the security-relevant number.`));
+}
 body.push(Img(H ? H.fig("robustness_constrained.png") : "", 5.2), Caption("Figure 3: Accuracy under PGD, constrained vs unconstrained, hybrid."));
 if (H && A && curve(H, "domain-constrained", 0.1) != null) {
   body.push(P(`Robustness. At ε = 0.1 the undefended hybrid retains ${pct(curve(H, "domain-constrained", 0.1))} under the constrained attack and ${pct(curve(H, "unconstrained", 0.1))} under the unconstrained one, so ignoring physical validity overstates the vulnerability by ${pct(curve(H, "domain-constrained", 0.1) - curve(H, "unconstrained", 0.1))} points. Adversarial training lifts the constrained figure to ${pct(curve(A, "domain-constrained", 0.1))} at ε = 0.1 and ${pct(curve(A, "domain-constrained", 0.2))} at ε = 0.2 (undefended: ${pct(curve(H, "domain-constrained", 0.2))}), for a clean-accuracy cost of ${pct(H.metrics.test.accuracy - A.metrics.test.accuracy)} points.`));
