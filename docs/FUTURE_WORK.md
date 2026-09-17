@@ -31,15 +31,14 @@ Honest list of what is missing, what is weak, and what would be worth doing next
 - **Fixed sequence length of 128 packets during training.** `antod.inference.score_flow_windows`
   now slides the window across the whole flow at inference (mean or
   max-malicious combination), but training still sees only the first window.
-- **Attacks perturb features, not packets.** The sequence-space attack respects
-  pad-only / delay-only, but the statistics-space attack perturbs the 51
-  aggregates directly, and not every point in the feature box corresponds to a
-  realisable flow (e.g. `n_packets` and `duration` are perturbed independently).
-  A packet-level attack that modifies the flow and *re-extracts* features would
-  be the strictly correct threat model.
-- **Only white-box and cross-architecture transfer.** No black-box query
-  attacks (e.g. score-based or boundary attacks), which is the realistic setting
-  for an attacker who can probe a deployed detector but never sees its weights.
+- **Gradient attacks perturb features, not packets.** The statistics-space PGD
+  perturbs the 51 aggregates directly, and not every point in the feature box is
+  a realisable flow. The packet-space attack (`packet_attack.py`) is the strictly
+  correct threat model and is now reported alongside; treat the gradient numbers
+  as an upper bound on the threat.
+- **Black-box search is greedy.** The packet-space attack accepts any edit that
+  raises the benign probability; a smarter search (NES, SimBA) would evade with
+  fewer queries and less overhead, so its evasion rate is a lower bound.
 - **Adversarial training against a single attack config.** The defended model is
   trained against PGD-5 on both surfaces. Robustness to attacks with a
   different norm, surface or step schedule is not measured.
@@ -64,13 +63,13 @@ Honest list of what is missing, what is weak, and what would be worth doing next
 ### Models
 - Attention or a small transformer over the packet sequence, to test whether
   position-aware models beat convolution on long-range cadence.
-- A bidirectional GRU/LSTM as a second sequence baseline.
+- [x] Bidirectional GRU (`gru`, packed to true length so padding never leaks in) — `configs/gru.yaml`.
 - [x] Sliding-window inference for flows longer than 128 packets (`antod/inference.py`).
 - [x] Calibration (temperature scaling + ECE) — `antod/calibration.py`, reported in `metrics.json`.
 
 ### Adversarial
-- Packet-level attacks that re-extract features after each step.
-- Black-box query attacks (NES, SimBA, HopSkipJump) against the deployed model.
+- [x] Packet-level attack that edits raw packets (pad/delay only) and re-extracts features — `adversarial/packet_attack.py`, run by `antod attack`. It is also black-box (queries only, no gradients), so it is comparable across architectures.
+- Stronger black-box search (NES / SimBA-style) — the current attack is a greedy hill-climb.
 - Certified robustness via randomised smoothing bounds (Cohen et al.) rather than
   just the empirical majority vote.
 - TRADES / MART loss instead of plain PGD adversarial training, and a sweep over

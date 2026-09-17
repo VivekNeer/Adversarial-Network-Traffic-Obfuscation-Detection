@@ -330,6 +330,27 @@ def cmd_attack(cfg: ExperimentConfig) -> int:
     print("\nrandomised smoothing\n" + format_table(smoothing))
     write_markdown_table(smoothing, paths["tables"] / "smoothing.md")
 
+    # packet-space black-box attack on freshly generated malicious flows: the
+    # strictly correct threat model, and comparable across all architectures
+    from antod.adversarial.packet_attack import PacketAttackConfig, evaluate_packet_attack
+    from antod.data.synth import generate_dataset
+
+    probe_cfg = cfg.dataset.synth_config()
+    probe_cfg.n_flows = 300
+    probe_cfg.seed = cfg.seed + 1000
+    probe_flows = generate_dataset(probe_cfg)
+    packet_attack = evaluate_packet_attack(
+        model, scaler, probe_flows, PacketAttackConfig(seed=cfg.seed), device
+    )
+    logger.info(
+        "packet-space attack: evasion %.3f -> %.3f, mean overhead %.1f%%, %.0f queries",
+        packet_attack["evasion_before"],
+        packet_attack["evasion_after"],
+        100 * packet_attack["mean_overhead"],
+        packet_attack["mean_queries_to_evade"],
+    )
+    write_markdown_table([packet_attack], paths["tables"] / "packet_attack.md")
+
     save_json(
         {
             "clean": clean.to_dict(),
@@ -337,6 +358,7 @@ def cmd_attack(cfg: ExperimentConfig) -> int:
             "robustness_curves": {k: {"eps": v[0], "value": v[1]} for k, v in curves.items()},
             "evasion_curves": {k: {"eps": v[0], "value": v[1]} for k, v in evasion.items()},
             "smoothing": smoothing,
+            "packet_attack": packet_attack,
         },
         paths["root"] / "attack_results.json",
     )

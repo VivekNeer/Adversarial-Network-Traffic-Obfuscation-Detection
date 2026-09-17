@@ -8,6 +8,7 @@ from antod.models.base import FlowClassifier, available_models, build_model, reg
 from antod.models.baselines import BASELINES, SklearnBaseline, build_baseline
 from antod.models.cnn1d import CNN1D, ConvBlock
 from antod.models.mlp import MLP, HybridCNNMLP
+from antod.models.rnn import GRUClassifier
 
 __all__ = [
     "BASELINES",
@@ -15,6 +16,7 @@ __all__ = [
     "MLP",
     "ConvBlock",
     "FlowClassifier",
+    "GRUClassifier",
     "HybridCNNMLP",
     "SklearnBaseline",
     "available_models",

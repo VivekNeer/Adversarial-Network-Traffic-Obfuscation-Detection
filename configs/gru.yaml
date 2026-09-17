@@ -1,0 +1,46 @@
+# Bidirectional GRU: does order and long-range context beat convolution?
+name: gru
+seed: 42
+
+dataset:
+  source: cached
+  path: data/processed/dataset.npz
+
+split:
+  val_frac: 0.15
+  test_frac: 0.20
+  seed: 42
+
+train:
+  model: gru
+  epochs: 60
+  batch_size: 128
+  lr: 0.001
+  weight_decay: 0.0001
+  grad_clip: 1.0
+  label_smoothing: 0.05
+  scheduler: cosine
+  patience: 12
+  # macro-F1, not accuracy: a model that collapses malicious_obfuscated into
+  # malicious_plain barely loses accuracy but loses a lot of macro-F1, and that
+  # collapse is the exact failure this project exists to avoid.
+  selection_metric: macro_f1
+  device: auto
+  seed: 42
+
+defense:
+  method: none
+
+baselines: [random_forest]
+
+attacks:
+  - {name: fgsm, surface: seq, eps: 0.05}
+  - {name: fgsm, surface: seq, eps: 0.1}
+  - {name: pgd, surface: seq, eps: 0.05, steps: 10}
+  - {name: pgd, surface: seq, eps: 0.1, steps: 10}
+  - {name: pgd, surface: seq, eps: 0.2, steps: 20}
+  - {name: pgd, surface: seq, eps: 0.1, steps: 10, constrained: false}
+  - {name: pgd, surface: seq, eps: 0.1, steps: 10, targeted: true}
+
+output:
+  dir: experiments/results/gru
