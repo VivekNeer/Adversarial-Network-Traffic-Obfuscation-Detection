@@ -255,3 +255,21 @@ class TestPersistence:
                 profile=dataset.profile,
                 recipe=dataset.recipe,
             )
+
+
+class TestSubsample:
+    def test_none_returns_everything(self, dataset: FlowDataset) -> None:
+        assert dataset.subsample(None) is dataset
+        assert dataset.subsample(10_000) is dataset
+
+    def test_is_stratified_and_bounded(self, dataset: FlowDataset) -> None:
+        sub = dataset.subsample(90, seed=1)
+        assert abs(len(sub) - 90) <= 3
+        counts = sub.class_counts()
+        assert max(counts.values()) - min(counts.values()) <= 2
+
+    def test_is_reproducible(self, dataset: FlowDataset) -> None:
+        a = dataset.subsample(60, seed=4)
+        b = dataset.subsample(60, seed=4)
+        np.testing.assert_array_equal(a.y, b.y)
+        np.testing.assert_allclose(a.stats, b.stats)

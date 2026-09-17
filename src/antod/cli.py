@@ -264,7 +264,9 @@ def cmd_attack(cfg: ExperimentConfig) -> int:
 
     model, scaler, _ = load_checkpoint(paths["checkpoint"], device=cfg.train.device)
     splits = resolve_splits(cfg)
-    test = splits.test
+    test = splits.test.subsample(cfg.output.attack_flows, seed=cfg.seed)
+    if cfg.output.attack_flows:
+        logger.info("attacking a stratified subsample of %d test flows", len(test))
 
     configs = cfg.attacks or [
         AttackConfig(name="fgsm", surface="both", eps=0.1),
@@ -427,7 +429,7 @@ def cmd_evaluate(cfg: ExperimentConfig) -> int:
             models[f"{ckpt.parent.name}:{label}"] = other
         matrix = transfer_matrix(
             models,
-            splits.test,
+            splits.test.subsample(cfg.output.transfer_flows, seed=cfg.seed),
             scaler,
             AttackConfig(name="pgd", surface="both", eps=0.1, steps=10),
             device,

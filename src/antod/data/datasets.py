@@ -80,6 +80,18 @@ class FlowDataset:
             recipe=self.recipe[idx],
         )
 
+    def subsample(self, n: int | None, seed: int = 0) -> FlowDataset:
+        """Class-stratified random subset of at most ``n`` flows (all if ``n`` is None)."""
+        if n is None or n >= len(self):
+            return self
+        rng = np.random.default_rng(seed)
+        keep: list[np.ndarray] = []
+        for label in np.unique(self.y):
+            idx = np.flatnonzero(self.y == label)
+            take = max(1, int(round(n * idx.size / len(self))))
+            keep.append(rng.choice(idx, size=min(take, idx.size), replace=False))
+        return self.subset(np.sort(np.concatenate(keep)))
+
     def class_counts(self) -> dict[str, int]:
         return {name: int((self.y == i).sum()) for i, name in enumerate(LABEL_NAMES)}
 

@@ -77,6 +77,16 @@ class OutputSection:
     save_checkpoint: bool = True
     save_figures: bool = True
 
+    #: Stratified subsample of the test split used for attack sweeps and
+    #: robustness curves. ``None`` uses every test flow. Iterative attacks on a
+    #: recurrent model cost minutes per run; 1,000 flows keeps the estimate
+    #: within about +/-1.5 points while making the sweep tractable.
+    attack_flows: int | None = None
+
+    #: Subsample used for the transfer matrix, which crafts examples on every
+    #: checkpoint against every other -- 25 attacks for five models.
+    transfer_flows: int | None = 1000
+
     @property
     def path(self) -> Path:
         return Path(self.dir)

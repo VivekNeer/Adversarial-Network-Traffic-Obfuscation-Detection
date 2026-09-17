@@ -44,3 +44,5 @@ attacks:
 
 output:
   dir: experiments/results/gru
+  # PGD through the recurrence costs ~2.5 min per run on CPU; subsample.
+  attack_flows: 500
