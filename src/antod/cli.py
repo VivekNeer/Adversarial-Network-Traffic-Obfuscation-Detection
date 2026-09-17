@@ -1,4 +1,4 @@
-"""Command-line entry point: ``antod generate | train | attack | evaluate | all | predict``.
+"""Command-line entry point: ``antod generate | train | attack | evaluate | calibrate | all | predict``.
 
 Every subcommand is driven by the same YAML file and writes into the same output
 directory, and each one starts by re-resolving the dataset from the config rather
@@ -513,6 +513,48 @@ def cmd_predict(cfg: ExperimentConfig, csv_path: str | None, out: str | None) ->
     return 0
 
 
+def cmd_calibrate(cfg: ExperimentConfig) -> int:
+    """Fit temperature scaling on an existing checkpoint and record base-rate precision.
+
+    Both are also computed by ``train``; this command exists so a checkpoint
+    trained earlier can be calibrated without retraining, and so the numbers in
+    ``metrics.json`` can be refreshed after the base-rate assumptions change.
+    """
+    from antod.utils.common import load_json
+
+    paths = _paths(cfg)
+    if not paths["checkpoint"].exists():
+        logger.error("no checkpoint at %s -- run `antod train` first", paths["checkpoint"])
+        return 1
+
+    device = pick_device(cfg.train.device)
+    model, scaler, _ = load_checkpoint(paths["checkpoint"], device=cfg.train.device)
+    splits = resolve_splits(cfg)
+    test = evaluate_clean(model, splits.test, scaler, device)
+
+    calibration = calibrate(
+        model,
+        tuple(t.to(device) for t in FlowTensorDataset(splits.val, scaler).tensors()),
+        tuple(t.to(device) for t in FlowTensorDataset(splits.test, scaler).tensors()),
+    )
+    base_rate = {f"{share:g}": precision_at_base_rate(test, share) for share in (0.9, 0.99, 0.999)}
+    logger.info(
+        "calibration: T=%.3f  ECE %.4f -> %.4f;  at 99%% benign: precision %.3f, %.1f false alerts / 10k",
+        calibration["temperature"],
+        calibration["ece_before"],
+        calibration["ece_after"],
+        base_rate["0.99"]["precision"],
+        base_rate["0.99"]["false_alerts_per_10k"],
+    )
+
+    report = load_json(paths["metrics"]) if paths["metrics"].exists() else {"name": cfg.name}
+    report["calibration"] = calibration
+    report["precision_at_base_rate"] = base_rate
+    save_json(report, paths["metrics"])
+    write_predictions(model, splits.test, scaler, device, paths["root"] / "predictions.csv")
+    return 0
+
+
 def cmd_all(cfg: ExperimentConfig) -> int:
     for step in (cmd_train, cmd_attack, cmd_evaluate):
         code = step(cfg)
@@ -529,6 +571,7 @@ COMMANDS = {
     "train": cmd_train,
     "attack": cmd_attack,
     "evaluate": cmd_evaluate,
+    "calibrate": cmd_calibrate,
     "all": cmd_all,
     "predict": cmd_predict,
 }
