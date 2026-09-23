@@ -2,182 +2,168 @@
 
 Tested on Windows 11 with CPU-only PyTorch. Works the same on Linux/macOS.
 
-## 1. Setup
+## 1. Setup & Environment
 
-Requires Python 3.10+. The easiest route is [`uv`](https://docs.astral.sh/uv/):
+Requires Python 3.10+. The project environment is already configured in `.venv/`.
+
+### Windows PowerShell Quick Start
+
+ANTOD and its dependencies (PyTorch, scikit-learn, etc.) are installed in the local virtual environment. In PowerShell:
+
+```powershell
+# Activate the virtual environment
+& .\.venv\Scripts\Activate.ps1
+
+# Verify the antod CLI is active
+antod --help
+```
+
+> **Tip:** If you prefer running without activating the virtual environment in your shell, you can directly invoke the executable:
+> ```powershell
+> .\.venv\Scripts\antod.exe --help
+> ```
+> Global `python` has also been mapped to Python 3.11 in `~/.local/bin/python.exe`, avoiding the Windows Store execution stub (`Python was not found`).
+
+---
+
+## 2. Interactive Web Dashboard (GUI)
+
+An interactive, high-aesthetic web dashboard is included to explore pre-computed results, inspect test flows, and run live inference without re-running experiments.
+
+Launch the GUI dashboard:
+
+```powershell
+# Option 1: Via the antod CLI
+antod gui
+
+# Option 2: Directly via python script
+python scripts/gui.py
+```
+
+The server launches at **`http://localhost:8000`** and opens automatically in your browser.
+
+### Key Dashboard Tabs:
+1. **Overview & KPIs**: Test accuracy (`96.88%`), obfuscated recall (`94.24%`), malicious recall (`98.60%`), base-rate precision, and threat class cards.
+2. **Model Leaderboard**: Side-by-side comparison across all 5 models (`Hybrid`, `CNN-1D`, `MLP`, `GRU`, `Hybrid+AdvTrain`) and classical baselines (`Random Forest`, `RBF-SVM`, `Logistic Regression`), plus confusion matrices and training convergence curves.
+3. **Adversarial Robustness**: White-box attack sweeps (FGSM, PGD), physical domain constraints vs unconstrained curves, randomized smoothing, and black-box packet-space attacks.
+4. **Techniques & Profiles**: Detection sensitivity by evasion transform (padding, jitter, shaping, fragmentation, tunneling) and application profile accuracy.
+5. **Flow Inspector**: Filter and inspect all 4,001 test flows from `predictions.csv` with true vs predicted labels and class probability distributions.
+6. **Real-Time Flow Scorer**: Live PyTorch inference using `checkpoint.pt` on customized or synthesized flow profiles.
+7. **antod CLI Studio**: Interactive command builder with live background execution logs.
+
+---
+
+## 3. ANTOD CLI Reference
+
+The CLI entry point is `antod`, which supports 8 subcommands:
+
+```
+usage: antod [-h] [--config CONFIG] [--name NAME] [--out OUT] [--epochs EPOCHS] [--model MODEL]
+             [--n-flows N_FLOWS] [--seed SEED] [--device DEVICE] [--input INPUT]
+             [--predictions-out PREDICTIONS_OUT] [--port PORT] [--host HOST] [--no-browser]
+             {all,attack,calibrate,evaluate,generate,gui,predict,train}
+```
+
+### Commands
+
+| Subcommand | Purpose | Key Outputs |
+| :--- | :--- | :--- |
+| `antod gui` | Launches the interactive web dashboard on localhost:8000. | Web Dashboard |
+| `antod generate` | Generates synthetic flows or loads real capture data and splits them. | `data/processed/dataset.npz` |
+| `antod train` | Trains a deep model (`cnn1d`, `mlp`, `hybrid`, `gru`) + fits baselines (`random_forest`, `svm`, `lr`). Computes calibration and base-rate precision. | `checkpoint.pt`, `metrics.json`, `predictions.csv`, training & confusion plots, baseline comparison |
+| `antod attack` | Adversarial robustness evaluation: FGSM/PGD sweeps, domain-constrained vs unconstrained perturbations, randomized smoothing, and packet-space black-box attacks. | `attack_results.json`, `attack_sweep.md`, `robustness_constrained.png`, `evasion_rate.png`, `packet_attack.md` |
+| `antod evaluate` | Detailed post-hoc evaluation: per-technique recall, per-profile accuracy, and multi-model adversarial transferability matrix. | `evaluation.json`, `per_technique_recall.md`, `per_profile_accuracy.md`, `transfer_matrix.md` |
+| `antod calibrate` | Re-runs temperature scaling calibration and base-rate precision on an existing checkpoint without retraining. | Refreshed `metrics.json`, `predictions.csv` |
+| `antod predict` | Classifies an unlabeled per-packet CSV from a real capture using a trained model. | Scored CSV with predictions and class probabilities (`predictions.csv`) |
+| `antod all` | Chains `train` ➔ `attack` ➔ `evaluate` in a single run. | All experiment figures, tables, and metrics |
+
+---
+
+## 4. Existing Pre-Run Results
+
+**All major model configurations have already been run and evaluated!** You do not need to re-run the time-consuming training or attack sweeps to view results.
+
+The generated figures, tables, metrics, and predictions are committed and organized under `experiments/results/`:
+
+```
+experiments/results/
+├── cnn1d/                # 1D Convolutional Neural Network (packet sequence view)
+├── mlp/                  # Multi-Layer Perceptron (51 statistical flow features)
+├── hybrid/               # Hybrid Model (CNN sequence + MLP statistics - best clean performer)
+├── gru/                  # Gated Recurrent Unit (sequential baseline)
+└── hybrid_advtrain/      # Hybrid Model with Adversarial Training defense (hardened)
+```
+
+### Inside each result folder (`experiments/results/<model>/`):
+
+1. **Markdown Tables (`tables/`)** — Formatted tables ready to copy into documents:
+   - `model_comparison.md`: Deep model vs Random Forest, RBF-SVM, and Logistic Regression.
+   - `attack_sweep.md`: Accuracy, F1, and evasion rates under FGSM and PGD attacks.
+   - `packet_attack.md`: Black-box problem-space packet attack results (evasion & overhead).
+   - `smoothing.md`: Randomized smoothing defense results across noise standard deviations ($\sigma$).
+   - `per_technique_recall.md`: Detection recall across specific evasion techniques (padding, timing jitter, fragmentation, tunneling, etc.).
+   - `per_profile_accuracy.md`: Accuracy across application profiles (browsing, video, voip, bulk).
+   - `transfer_matrix.md`: Adversarial transferability across different architectures.
+
+2. **Visual Figures (`figures/`)** — Publication-quality charts (with matching `.csv` raw data):
+   - `training_curves.png`: Epoch-by-epoch train/validation loss and accuracy.
+   - `confusion_matrix.png`: Normalized confusion matrix (benign vs plain vs obfuscated).
+   - `model_comparison.png`: Bar comparison across models and baselines.
+   - `feature_importance.png`: Top informative flow features from Random Forest.
+   - `robustness_constrained.png`: Accuracy curves under domain-valid vs unconstrained attacks.
+   - `evasion_rate.png`: Adversarial evasion curve as a function of perturbation budget $\epsilon$.
+   - `per_technique_recall.png`: Obfuscation technique recall breakdown.
+   - `per_profile_accuracy.png`: Accuracy across traffic application profiles.
+
+3. **Predictions & Checkpoints**:
+   - `predictions.csv`: Per-flow predictions on the test set with true label, predicted label, recipe, and softmax probabilities.
+   - `metrics.json` & `attack_results.json`: Machine-readable results and calibration stats.
+   - `checkpoint.pt`: Saved PyTorch model weights and fitted feature scaler.
+
+---
+
+## 5. Command-Line Overrides & Examples
+
+Any YAML configuration can be modified dynamically via command-line flags without touching the file:
 
 ```bash
-uv python install 3.11
-uv venv --python 3.11
-uv pip install -e ".[dev]"
-```
+# Override training epochs and output directory
+antod train -c configs/cnn1d.yaml --epochs 10 --out experiments/runs/custom_run
 
-Or with plain pip:
+# Override the model architecture and random seed
+antod train -c configs/cnn1d.yaml --model cnn1d_small --seed 42
 
-```bash
-python -m venv .venv
-# Windows: .venv\Scripts\activate    Linux/macOS: source .venv/bin/activate
-pip install -e ".[dev]"
-```
+# Override the dataset size for a fast test
+antod train -c configs/hybrid.yaml --n-flows 2000
 
-On Windows without activating the venv, prefix commands with
-`.venv\Scripts\python.exe -m` (e.g. `.venv\Scripts\python.exe -m antod.cli ...`).
-The examples below assume the venv is active.
-
-To reproduce the reported numbers exactly, install the pinned versions instead:
-
-```bash
-uv pip install -r requirements-lock.txt -e ".[dev]"
-```
-
-Check everything works:
-
-```bash
-pytest
-```
-
-## 2. Quick smoke run (≈3 min, CPU)
-
-```bash
-python scripts/run_all.py --quick
-```
-
-Generates 2 000 flows, trains all four models for 4 epochs, attacks and
-evaluates them. Output lands in `experiments/runs/quick_*/`.
-
-## 3. Full run (≈45–90 min on CPU)
-
-```bash
-python scripts/run_all.py
-```
-
-Or step by step:
-
-```bash
-antod generate -c configs/dataset.yaml        # 20k flows -> data/processed/dataset.npz
-antod train    -c configs/cnn1d.yaml          # train + baselines + figures + checkpoint
-antod attack   -c configs/cnn1d.yaml          # FGSM/PGD sweep, robustness curves, smoothing
-antod evaluate -c configs/cnn1d.yaml          # per-technique recall, per-profile, transfer
-```
-
-Repeat `train`/`attack`/`evaluate` for `mlp.yaml`, `hybrid.yaml`, `gru.yaml`,
-`hybrid_advtrain.yaml`. `antod all -c <config>` chains the last three.
-
-Seed variance (mean ± std over three seeds, needed before claiming one model
-beats another):
-
-```bash
-python scripts/seed_variance.py configs/hybrid.yaml --seeds 1 2 3
-```
-
-The transfer matrix in `evaluate` only appears once at least two checkpoints
-exist under `experiments/results/`. It runs on a stratified 1,000-flow subsample
-of the test split (`output.transfer_flows`); attack sweeps use every test flow
-unless `output.attack_flows` is set (the GRU config sets 500, because PGD
-through the recurrence costs minutes per run on CPU). Clean metrics always use
-the whole test split.
-
-## 4. Where the outputs go
-
-Each config writes to its `output.dir` (default `experiments/results/<name>/`):
-
-```
-metrics.json            clean test metrics, val metrics, baselines, feature importances,
-                        calibration (temperature, ECE), precision at 90/99/99.9% benign
-predictions.csv         one row per test flow: profile, recipe, true, predicted, probabilities
-attack_results.json     attack sweep rows, robustness/evasion curves, smoothing sweep,
-                        packet-space black-box attack summary
-evaluation.json         per-technique recall, per-profile accuracy, transfer matrix
-checkpoint.pt           weights + fitted scaler + config
-config.yaml             the resolved config that produced these results
-figures/                confusion_matrix, training_curves, model_comparison,
-                        feature_importance, robustness_constrained, evasion_rate,
-                        per_technique_recall, per_profile_accuracy  (.png + .csv)
-tables/                 model_comparison, attack_sweep, smoothing, packet_attack,
-                        per_technique_recall, per_profile_accuracy, transfer_matrix  (.md)
-```
-
-The `.md` tables paste straight into the report; the `.csv` beside each figure
-holds the exact numbers plotted.
-
-## 5. Command-line overrides
-
-Any config can be tweaked without editing it:
-
-```bash
-antod train -c configs/cnn1d.yaml --epochs 10 --n-flows 5000 --out experiments/runs/try1
-antod train -c configs/cnn1d.yaml --model cnn1d_small --seed 7
+# Force CPU or CUDA device
 antod train -c configs/hybrid.yaml --device cpu
 ```
 
-Flags: `--name`, `--out`, `--epochs`, `--model`, `--n-flows`, `--seed`, `--device`.
+### Scoring External Captures (`antod predict`)
 
-Available models: `cnn1d`, `cnn1d_small`, `mlp`, `mlp_wide`, `hybrid`, `gru`.
-Available baselines: `random_forest`, `rbf_svm`, `logistic_regression`.
-
-## 6. Using your own captures
-
-Export per-packet rows from a PCAP:
+To score raw packets extracted from a PCAP file using an existing trained checkpoint:
 
 ```bash
-tshark -r capture.pcap -T fields -E separator=, -E header=y -e tcp.stream -e frame.time_relative -e frame.len -e ip.src -e ip.dst > data/raw/packets.csv
+antod predict -c configs/hybrid.yaml --input data/raw/packets.csv --predictions-out data/scored_packets.csv
 ```
 
-Then in a config:
+---
 
-```yaml
-dataset:
-  source: real
-  path: data/raw/packets.csv
-  max_flows: 20000
-```
-
-Add a `label` column (`benign`, `portscan`, `dos hulk`, …) if you have one.
-Details in [DATA.md](DATA.md).
-
-To score a capture with an already-trained model (no labels needed):
+## 6. Development & Verification
 
 ```bash
-antod predict -c configs/hybrid.yaml --input data/raw/packets.csv --predictions-out scored.csv
+ruff check src tests      # linting
+ruff format src tests     # code formatting
+pytest -q                 # run unit test suite (~1 min)
 ```
 
-For flows longer than 128 packets, `antod.inference.score_flow_windows` slides
-the window across the whole flow and combines the per-window verdicts.
+## 7. Troubleshooting
 
-## 7. Using the code directly
+- **`Python was not found`** on Windows:
+  Windows attempted to run the Microsoft Store stub. This has been resolved by placing `python.exe` in `C:\Users\vivek\.local\bin`.
+- **`antod : The term 'antod' is not recognized`**:
+  Activate the virtual environment first (`& .\.venv\Scripts\Activate.ps1`) or call `.\.venv\Scripts\antod.exe`.
+- **`no checkpoint at ...`**:
+  Run `antod train` for that configuration first, or check that `--config` points to an experiment with an existing checkpoint under its output path.
 
-```python
-from antod.data.synth import SynthConfig
-from antod.data.datasets import build_dataset, stratified_split
-from antod.train import TrainConfig, Trainer
-from antod.evaluate import evaluate_clean, per_technique_recall
-from antod.adversarial import AttackConfig, run_attack
-import torch
-
-splits = stratified_split(build_dataset(SynthConfig(n_flows=3000, seed=1)))
-result = Trainer(TrainConfig(model="hybrid", epochs=15)).fit(splits)
-
-dev = torch.device("cpu")
-print(evaluate_clean(result.model, splits.test, splits.scaler, dev).summary())
-print(per_technique_recall(result.model, splits.scaler, dev, n_per_technique=200))
-```
-
-## 8. Development
-
-```bash
-ruff check src tests      # lint
-ruff format src tests     # format
-pytest -q                 # tests (~1 min)
-```
-
-## 9. Troubleshooting
-
-- **`Python was not found`** on Windows — that is the Microsoft Store stub.
-  Use `uv python install 3.11` or install Python from python.org.
-- **`feature set has changed since this dataset was written`** — regenerate
-  with `antod generate`; `FEATURE_NAMES` changed.
-- **`no checkpoint at ...`** — run `antod train` for that config first.
-- **Slow SVM** — drop `rbf_svm` from `baselines:` in the config; it is the only
-  baseline that scales badly with dataset size.
-- **CUDA** — `device: auto` picks a GPU if `torch.cuda.is_available()`; the
-  default install is CPU-only PyTorch. Install a CUDA build of torch to use one.

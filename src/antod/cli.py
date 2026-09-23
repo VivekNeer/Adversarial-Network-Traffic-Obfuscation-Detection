@@ -565,6 +565,18 @@ def cmd_all(cfg: ExperimentConfig) -> int:
     return 0
 
 
+def cmd_gui(args: argparse.Namespace) -> int:
+    """Launch the ANTOD interactive web dashboard."""
+    from antod.gui.server import start_server
+
+    start_server(
+        port=getattr(args, "port", 8000) or 8000,
+        host=getattr(args, "host", "127.0.0.1") or "127.0.0.1",
+        open_browser=not getattr(args, "no_browser", False),
+    )
+    return 0
+
+
 # --------------------------------------------------------------------------- #
 # argument parsing
 # --------------------------------------------------------------------------- #
@@ -576,6 +588,7 @@ COMMANDS = {
     "calibrate": cmd_calibrate,
     "all": cmd_all,
     "predict": cmd_predict,
+    "gui": cmd_gui,
 }
 
 
@@ -585,7 +598,7 @@ def build_parser() -> argparse.ArgumentParser:
         description="Adversarial Network Traffic Obfuscation Detection",
     )
     parser.add_argument("command", choices=sorted(COMMANDS), help="what to run")
-    parser.add_argument("--config", "-c", required=True, help="path to a YAML experiment config")
+    parser.add_argument("--config", "-c", required=False, help="path to a YAML experiment config")
     parser.add_argument("--name", help="override the experiment name")
     parser.add_argument("--out", help="override the output directory")
     parser.add_argument("--epochs", type=int, help="override the epoch count")
@@ -595,6 +608,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--device", help="cpu | cuda | auto")
     parser.add_argument("--input", help="predict: per-packet CSV to score")
     parser.add_argument("--predictions-out", help="predict: where to write the scored rows")
+    parser.add_argument("--port", type=int, default=8000, help="gui: port to listen on (default 8000)")
+    parser.add_argument("--host", default="127.0.0.1", help="gui: host to bind to (default 127.0.0.1)")
+    parser.add_argument("--no-browser", action="store_true", help="gui: do not open browser")
     return parser
 
 
@@ -621,7 +637,14 @@ def apply_overrides(cfg: ExperimentConfig, args: argparse.Namespace) -> Experime
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    if args.command == "gui":
+        return cmd_gui(args)
+
+    if not args.config:
+        parser.error(f"{args.command} requires --config / -c")
+
     cfg = apply_overrides(load_config(args.config), args)
     logger.info("experiment %r -> %s", cfg.name, cfg.output.dir)
     torch.set_num_threads(max(1, (torch.get_num_threads() or 4)))
@@ -632,3 +655,4 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
