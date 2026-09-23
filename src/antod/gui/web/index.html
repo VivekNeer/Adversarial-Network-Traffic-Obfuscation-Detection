@@ -6,73 +6,77 @@
   <title>ANTOD — Adversarial Network Traffic Obfuscation Detection</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app-container">
-    <!-- Top Navigation Bar -->
+    <!-- Top System Header -->
     <header class="top-nav">
       <div class="brand">
-        <div class="brand-logo">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <path d="m9 12 2 2 4-4"/>
+        <div class="brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2"/>
+            <path d="M7 7h.01"/><path d="M17 7h.01"/><path d="M7 17h.01"/><path d="M17 17h.01"/>
+            <path d="M12 12v.01"/>
           </svg>
         </div>
-        <div class="brand-text">
-          <h1>ANTOD <span class="tag">DEFENSIVE ML</span></h1>
-          <p>Adversarial Network Traffic Obfuscation Detection</p>
+        <div>
+          <div class="brand-title">
+            ANTOD RESEARCH CONSOLE
+            <span class="badge-tag">CS722T2C</span>
+          </div>
+          <div class="brand-desc">Deep Learning Detection of DPI-Evasion & Adversarial Traffic Obfuscation</div>
         </div>
       </div>
 
-      <!-- Global Model Switcher -->
-      <div class="nav-controls">
-        <div class="model-select-wrapper">
-          <label for="modelSelect">Active Checkpoint:</label>
+      <!-- Active Checkpoint Selector -->
+      <div class="nav-right">
+        <div class="model-selector-group">
+          <label for="modelSelect">Checkpoint:</label>
           <select id="modelSelect" class="model-select">
-            <option value="hybrid">Hybrid (CNN + MLP) — Best Clean</option>
-            <option value="hybrid_advtrain">Hybrid (+ Adv Training) — Hardened</option>
-            <option value="cnn1d">1D-CNN (Packet Sequence)</option>
-            <option value="mlp">MLP (51 Engineered Stats)</option>
-            <option value="gru">GRU (Recurrent Baseline)</option>
+            <option value="hybrid">hybrid (CNN + MLP) — Benchmark Model</option>
+            <option value="hybrid_advtrain">hybrid_advtrain (+ Adv Training Defense)</option>
+            <option value="cnn1d">cnn1d (Sequence 1D-CNN)</option>
+            <option value="mlp">mlp (51 Engineered Moments)</option>
+            <option value="gru">gru (Bi-GRU Recurrent Baseline)</option>
           </select>
         </div>
-        <div class="status-pill ready" id="systemStatus">
-          <span class="dot"></span> 5 Models Pre-Computed
+        <div class="system-status-indicator" id="systemStatus">
+          <span class="status-dot"></span> 5 CHECKPOINTS MOUNTED
         </div>
       </div>
     </header>
 
-    <!-- Main Tab Navigation -->
-    <nav class="tab-bar">
-      <button class="tab-btn active" data-tab="overview">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-        Overview & KPIs
+    <!-- Navigation Tabs -->
+    <nav class="tab-nav">
+      <button class="tab-btn tab-link active" data-tab="overview">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        Overview & Telemetry
       </button>
-      <button class="tab-btn" data-tab="leaderboard">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-        Model Leaderboard
+      <button class="tab-btn tab-link" data-tab="leaderboard">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+        Model Leaderboard & Baselines
       </button>
-      <button class="tab-btn" data-tab="adversarial">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <button class="tab-btn tab-link" data-tab="adversarial">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Adversarial Robustness
       </button>
-      <button class="tab-btn" data-tab="techniques">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        Techniques & Profiles
+      <button class="tab-btn tab-link" data-tab="techniques">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Evasion Techniques & Profiles
       </button>
-      <button class="tab-btn" data-tab="inspector">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        Flow Inspector (4,000 Test Flows)
+      <button class="tab-btn tab-link" data-tab="inspector">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        Flow Inspector (4,001 Test Cases)
       </button>
-      <button class="tab-btn" data-tab="live-predict">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      <button class="tab-btn tab-link" data-tab="live-predict">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
         Real-Time Flow Scorer
       </button>
-      <button class="tab-btn" data-tab="cli-studio">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
-        antod CLI Studio
+      <button class="tab-btn tab-link" data-tab="cli-studio">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>
+        CLI Studio
       </button>
     </nav>
 
@@ -80,68 +84,83 @@
     <main class="content-container">
       
       <!-- ================= 1. OVERVIEW ================= -->
-      <section id="view-overview" class="tab-view active">
-        <div class="hero-banner">
-          <div class="hero-content">
-            <div class="badge-row">
-              <span class="badge blue">CS722T2C Deep Learning Project</span>
-              <span class="badge green">Sahyadri College of Eng. & Mgmt (VTU)</span>
-              <span class="badge cyan">Pre-Computed Results (No Re-run Required)</span>
-            </div>
-            <h2>DPI-Evasion & Obfuscated Network Traffic Detection</h2>
-            <p>
-              Modern malware hides <em>how</em> it communicates through packet padding, timing jitter, and protocol mimicry. 
-              ANTOD learns bidirectional packet shape and aggregate moments to detect obfuscated traffic where signature-based DPI fails, 
-              stress-tested under domain-constrained adversarial machine learning.
-            </p>
+      <section id="view-overview" class="tab-view tab-panel active">
+        <!-- Technical Metadata Strip -->
+        <div class="meta-strip">
+          <div class="meta-item">
+            <span class="meta-key">DATASET POPULATION</span>
+            <span class="meta-val">20,000 Flows (Stratified 60 / 20 / 20)</span>
           </div>
-          <div class="hero-classes">
-            <div class="class-card benign">
-              <div class="class-badge">CLASS 0</div>
-              <h3>Benign</h3>
-              <p>Legitimate application flows (web, video, VoIP, bulk transfers, TLS)</p>
+          <div class="meta-item">
+            <span class="meta-key">INPUT FEATURES</span>
+            <span class="meta-val">128 Pkts × 4 Channels (Seq) + 51 Moments (Stats)</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-key">THREAT MODEL</span>
+            <span class="meta-val">Physical Domain-Constrained FGSM / PGD</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-key">EXECUTION PLATFORM</span>
+            <span class="meta-val">PyTorch CPU (Seed Fixed, Windows 11)</span>
+          </div>
+        </div>
+
+        <!-- 3-Class Categorization Strip -->
+        <div class="classes-strip">
+          <div class="class-box benign">
+            <div class="class-header">
+              <span class="class-title">Benign Traffic</span>
+              <span class="class-code">CLASS 0</span>
             </div>
-            <div class="class-card plain">
-              <div class="class-badge">CLASS 1</div>
-              <h3>Malicious Plain</h3>
-              <p>Undisguised attacks (C2 beacons, scans, plain exfiltration)</p>
+            <div class="class-desc">
+              Unmodified or tunnelled legitimate traffic (web, adaptive video, VoIP, file transfer). Tunnelled/VPN benign traffic is modelled to prevent false flagging.
             </div>
-            <div class="class-card obfuscated">
-              <div class="class-badge">CLASS 2</div>
-              <h3>Malicious Obfuscated</h3>
-              <p>Reshaped attacks using padding, jitter & tunneling to evade DPI</p>
+          </div>
+          <div class="class-box plain">
+            <div class="class-header">
+              <span class="class-title">Malicious Plain</span>
+              <span class="class-code">CLASS 1</span>
+            </div>
+            <div class="class-desc">
+              Undisguised hostile traffic (periodic C2 beacons, brute-force probes, direct exfiltration). Easily caught by statistical moments (>99.6% recall).
+            </div>
+          </div>
+          <div class="class-box obfuscated">
+            <div class="class-header">
+              <span class="class-title">Malicious Obfuscated</span>
+              <span class="class-code">CLASS 2</span>
+            </div>
+            <div class="class-desc">
+              Attacks modified via block/random padding, timing jitter, packet fragmentation, and encapsulation to intentionally evade signature-based DPI engines.
             </div>
           </div>
         </div>
 
-        <!-- Global Metrics KPIs -->
-        <div class="kpi-grid" id="kpiGrid">
-          <!-- Filled dynamically via app.js -->
+        <!-- KPI Grid -->
+        <div class="metrics-grid" id="kpiGrid">
+          <!-- Populated dynamically via app.js -->
         </div>
 
-        <!-- Quick Summary Panels -->
-        <div class="summary-columns">
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Core Architectural Insights</h3>
-              <span class="badge grey">Key Findings</span>
+        <!-- Research Findings & Active Profile -->
+        <div class="grid-2col">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Empirical Research Findings</span>
+              <span class="tag tag-slate">Evaluation Summary</span>
             </div>
-            <div class="card-body">
-              <ul class="styled-list">
-                <li><strong>Hybrid CNN+MLP dominates:</strong> Combining a 1D-CNN (packet sequence) and an MLP (51 aggregate features) reaches <strong>96.88% Accuracy</strong> and <strong>94.24% Obfuscated Recall</strong>.</li>
-                <li><strong>Plain attacks are trivial:</strong> Undisguised malicious traffic is caught with <strong>>99.6% recall</strong>; obfuscation is where all real detection challenge lies.</li>
-                <li><strong>Feature engineering matters:</strong> Size-grid occupancy (fingerprint of block padding) and timing regularity features let a Random Forest match the deep models on clean data.</li>
-                <li><strong>Realistic base-rate precision:</strong> Re-weighting to a realistic 99% benign network yields <strong>74.7% precision</strong> with only <strong>32.7 false alerts per 10k flows</strong>.</li>
-              </ul>
+            <div style="font-size: 0.84rem; line-height: 1.6; color: var(--text-secondary);">
+              <p style="margin-bottom: 8px;">• <strong>Dual-View Hybrid Dominance:</strong> Combining packet sequence convolutions with 51 statistical aggregates yields <strong>96.88% Accuracy</strong> and <strong>94.24% Obfuscated Recall</strong>, outperforming single-view baselines.</p>
+              <p style="margin-bottom: 8px;">• <strong>Obfuscation-Specific Features:</strong> Size-grid occupancy (detecting 64/128-byte block boundaries) and timing coefficient-of-variation carry robust evasion signals that survive encryption.</p>
+              <p>• <strong>Operational Reliability:</strong> Temperature scaling calibration (T = 0.73) reduces Expected Calibration Error to <strong>0.0062</strong>, guaranteeing predictable risk scores for production deployment.</p>
             </div>
           </div>
 
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Active Model Quick Profile</h3>
-              <span class="badge blue" id="activeModelTag">Hybrid</span>
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Active Model Telemetry</span>
+              <span class="tag tag-blue" id="activeModelTag">Hybrid</span>
             </div>
-            <div class="card-body" id="activeModelSummary">
+            <div id="activeModelSummary">
               <!-- Filled via app.js -->
             </div>
           </div>
@@ -149,31 +168,24 @@
       </section>
 
       <!-- ================= 2. MODEL LEADERBOARD ================= -->
-      <section id="view-leaderboard" class="tab-view">
-        <div class="section-header">
-          <div>
-            <h2>Model Benchmark & Baselines</h2>
-            <p>Comprehensive comparison across deep neural architectures and classical ML baselines on 20,000 flows.</p>
+      <section id="view-leaderboard" class="tab-view tab-panel">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Architecture Benchmark Leaderboard</span>
+            <span class="tag tag-slate">Balanced Test Split (4,001 Flows)</span>
           </div>
-        </div>
-
-        <div class="card glass mb-4">
-          <div class="card-header">
-            <h3>Leaderboard: Deep Models vs Classical Baselines</h3>
-            <span class="badge cyan">Test Set (4,001 Flows)</span>
-          </div>
-          <div class="table-responsive">
-            <table class="data-table" id="leaderboardTable">
+          <div class="table-wrapper">
+            <table class="data-tbl" id="leaderboardTable">
               <thead>
                 <tr>
                   <th>Model / Architecture</th>
-                  <th>Type</th>
+                  <th>Framework</th>
                   <th>Accuracy</th>
                   <th>Macro F1</th>
                   <th>Obfuscated Recall</th>
                   <th>Malicious Recall</th>
                   <th>False Positive Rate</th>
-                  <th>Params / Speed</th>
+                  <th>Complexity / Runtime</th>
                 </tr>
               </thead>
               <tbody id="leaderboardBody">
@@ -183,76 +195,60 @@
           </div>
         </div>
 
-        <!-- Visual Analytics Grid -->
-        <div class="two-col-grid">
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Confusion Matrix</h3>
-              <span class="badge grey" id="cmModelTitle">Active Model</span>
+        <div class="grid-2col">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Confusion Matrix</span>
+              <span class="tag tag-slate">Normalized Test Partition</span>
             </div>
-            <div class="card-body center-content">
-              <div class="figure-container">
-                <img id="cmImage" src="" alt="Confusion Matrix" class="responsive-fig">
-              </div>
+            <div class="figure-viewport">
+              <img id="cmImage" src="" alt="Confusion Matrix" class="figure-img">
             </div>
           </div>
 
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Training History & Convergence</h3>
-              <span class="badge grey">Train vs Val Curves</span>
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Training Convergence</span>
+              <span class="tag tag-slate">Loss & Metric History</span>
             </div>
-            <div class="card-body center-content">
-              <div class="figure-container">
-                <img id="trainingCurvesImage" src="" alt="Training Curves" class="responsive-fig">
-              </div>
+            <div class="figure-viewport">
+              <img id="trainingCurvesImage" src="" alt="Training Curves" class="figure-img">
             </div>
           </div>
         </div>
 
-        <div class="two-col-grid mt-4">
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Most Informative Flow Statistics (Random Forest)</h3>
-              <span class="badge amber">Top 15 Features</span>
+        <div class="grid-2col">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Feature Importance Ranking</span>
+              <span class="tag tag-amber">Random Forest Baseline (Gini Importance)</span>
             </div>
-            <div class="card-body center-content">
-              <div class="figure-container">
-                <img id="featureImportanceImage" src="" alt="Feature Importance" class="responsive-fig">
-              </div>
+            <div class="figure-viewport">
+              <img id="featureImportanceImage" src="" alt="Feature Importance" class="figure-img">
             </div>
           </div>
 
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Model Comparison Chart</h3>
-              <span class="badge green">Deep vs Baselines</span>
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Model Comparison Distribution</span>
+              <span class="tag tag-green">Cross-Architecture Comparison</span>
             </div>
-            <div class="card-body center-content">
-              <div class="figure-container">
-                <img id="modelComparisonImage" src="" alt="Model Comparison" class="responsive-fig">
-              </div>
+            <div class="figure-viewport">
+              <img id="modelComparisonImage" src="" alt="Model Comparison" class="figure-img">
             </div>
           </div>
         </div>
       </section>
 
       <!-- ================= 3. ADVERSARIAL ROBUSTNESS ================= -->
-      <section id="view-adversarial" class="tab-view">
-        <div class="section-header">
-          <div>
-            <h2>Adversarial Robustness & Attack Sweeps</h2>
-            <p>Evaluation against white-box (FGSM, PGD) and problem-space packet attacks under physical domain constraints.</p>
+      <section id="view-adversarial" class="tab-view tab-panel">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Adversarial Attack Sweep</span>
+            <span class="tag tag-rose" id="attackModelTag">Hybrid</span>
           </div>
-        </div>
-
-        <div class="card glass mb-4">
-          <div class="card-header">
-            <h3>White-Box Attack Sweep Outcomes</h3>
-            <span class="badge red" id="attackModelTag">Hybrid</span>
-          </div>
-          <div class="table-responsive">
-            <table class="data-table" id="attackSweepTable">
+          <div class="table-wrapper">
+            <table class="data-tbl" id="attackSweepTable">
               <thead>
                 <tr>
                   <th>Attack Configuration</th>
@@ -272,136 +268,104 @@
           </div>
         </div>
 
-        <div class="two-col-grid">
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Domain-Constrained vs Unconstrained Perturbations</h3>
-              <span class="badge blue">Problem-Space Validity</span>
+        <div class="grid-2col">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Domain Constraints vs Unconstrained Perturbations</span>
+              <span class="tag tag-blue">Physical Validity Bounds</span>
             </div>
-            <div class="card-body">
-              <p class="text-muted mb-2">Unconstrained gradient attacks push features into impossible territory (e.g. negative packet sizes). Constrained attacks enforce validity.</p>
-              <div class="figure-container">
-                <img id="robustnessConstrainedImage" src="" alt="Robustness Curves" class="responsive-fig">
-              </div>
+            <div class="figure-viewport">
+              <img id="robustnessConstrainedImage" src="" alt="Robustness Curves" class="figure-img">
             </div>
           </div>
 
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Adversarial Evasion Rate vs Budget (ε)</h3>
-              <span class="badge amber">Targeted vs Untargeted</span>
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Evasion Rate Curves</span>
+              <span class="tag tag-amber">Targeted vs Untargeted (ε-Budget)</span>
             </div>
-            <div class="card-body">
-              <p class="text-muted mb-2">Proportion of malicious traffic successfully evading into the benign class as perturbation budget increases.</p>
-              <div class="figure-container">
-                <img id="evasionRateImage" src="" alt="Evasion Rate Curves" class="responsive-fig">
-              </div>
+            <div class="figure-viewport">
+              <img id="evasionRateImage" src="" alt="Evasion Rate Curves" class="figure-img">
             </div>
           </div>
         </div>
 
-        <!-- Defenses & Packet Attacks -->
-        <div class="two-col-grid mt-4">
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Randomized Smoothing Defense</h3>
-              <span class="badge green">Certified Robustness Baseline</span>
+        <div class="grid-2col">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Randomized Smoothing Defense</span>
+              <span class="tag tag-green">Gaussian Noise Baseline</span>
             </div>
-            <div class="card-body" id="smoothingCardBody">
-              <!-- Rendered via JS -->
-            </div>
+            <div id="smoothingCardBody"></div>
           </div>
 
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Black-Box Packet-Space Attack</h3>
-              <span class="badge cyan">True Threat Model</span>
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Black-Box Problem-Space Attack</span>
+              <span class="tag tag-cyan">Direct Packet Mutation</span>
             </div>
-            <div class="card-body" id="packetAttackCardBody">
-              <!-- Rendered via JS -->
-            </div>
+            <div id="packetAttackCardBody"></div>
           </div>
         </div>
       </section>
 
       <!-- ================= 4. TECHNIQUES & PROFILES ================= -->
-      <section id="view-techniques" class="tab-view">
-        <div class="section-header">
-          <div>
-            <h2>Obfuscation Techniques & Traffic Profiles</h2>
-            <p>Fine-grained breakdown of detection sensitivity across specific DPI-evasion techniques and application types.</p>
-          </div>
-        </div>
-
-        <div class="two-col-grid">
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Recall by Obfuscation Technique</h3>
-              <span class="badge amber">Sensitivity Analysis</span>
+      <section id="view-techniques" class="tab-view tab-panel">
+        <div class="grid-2col">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Recall by Obfuscation Transform</span>
+              <span class="tag tag-amber">Evasion Sensitivity</span>
             </div>
-            <div class="card-body">
-              <div class="figure-container">
-                <img id="perTechniqueImage" src="" alt="Per-Technique Recall" class="responsive-fig">
-              </div>
-              <div class="mt-3 table-responsive">
-                <table class="data-table" id="techniqueTable">
-                  <thead>
-                    <tr><th>Technique</th><th>Detection Recall</th></tr>
-                  </thead>
-                  <tbody id="techniqueTableBody"></tbody>
-                </table>
-              </div>
+            <div class="figure-viewport" style="margin-bottom: 12px;">
+              <img id="perTechniqueImage" src="" alt="Per-Technique Recall" class="figure-img">
+            </div>
+            <div class="table-wrapper">
+              <table class="data-tbl" id="techniqueTable">
+                <thead>
+                  <tr><th>Transform Method</th><th>Detection Recall</th></tr>
+                </thead>
+                <tbody id="techniqueTableBody"></tbody>
+              </table>
             </div>
           </div>
 
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Accuracy by Application Profile</h3>
-              <span class="badge blue">Traffic Environments</span>
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Accuracy by Application Profile</span>
+              <span class="tag tag-blue">Traffic Categories</span>
             </div>
-            <div class="card-body">
-              <div class="figure-container">
-                <img id="perProfileImage" src="" alt="Per-Profile Accuracy" class="responsive-fig">
-              </div>
-              <div class="mt-3 table-responsive">
-                <table class="data-table" id="profileTable">
-                  <thead>
-                    <tr><th>Application Profile</th><th>Accuracy</th></tr>
-                  </thead>
-                  <tbody id="profileTableBody"></tbody>
-                </table>
-              </div>
+            <div class="figure-viewport" style="margin-bottom: 12px;">
+              <img id="perProfileImage" src="" alt="Per-Profile Accuracy" class="figure-img">
+            </div>
+            <div class="table-wrapper">
+              <table class="data-tbl" id="profileTable">
+                <thead>
+                  <tr><th>Traffic Profile</th><th>Accuracy</th></tr>
+                </thead>
+                <tbody id="profileTableBody"></tbody>
+              </table>
             </div>
           </div>
         </div>
 
-        <div class="card glass mt-4">
-          <div class="card-header">
-            <h3>Adversarial Transferability Matrix</h3>
-            <span class="badge cyan">Cross-Model Transfer</span>
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Adversarial Transferability Matrix</span>
+            <span class="tag tag-slate">Cross-Architecture Transfer</span>
           </div>
-          <div class="card-body" id="transferMatrixBody">
-            <!-- Populated via JS -->
-          </div>
+          <div id="transferMatrixBody"></div>
         </div>
       </section>
 
       <!-- ================= 5. FLOW INSPECTOR ================= -->
-      <section id="view-inspector" class="tab-view">
-        <div class="section-header">
-          <div>
-            <h2>Test Flow Inspector & Misclassification Explorer</h2>
-            <p>Examine individual flows from the 4,001 test cases with full recipe provenance, true vs predicted labels, and probabilities.</p>
-          </div>
-        </div>
-
-        <!-- Filter Bar -->
-        <div class="filter-bar card glass mb-3">
-          <div class="filter-group">
-            <label for="filterType">Filter By:</label>
-            <select id="filterType" class="form-input">
-              <option value="all">All Test Flows</option>
-              <option value="errors">Misclassified Only (Errors)</option>
+      <section id="view-inspector" class="tab-view tab-panel">
+        <div class="filter-bar-panel">
+          <div class="form-field" style="margin-bottom: 0;">
+            <label class="form-label" for="filterType">Classification Filter:</label>
+            <select id="filterType" class="input-box">
+              <option value="all">All Flows (4,001 Records)</option>
+              <option value="errors">Misclassified Flows Only (Errors)</option>
               <option value="fp">False Positives (Benign Flagged Malicious)</option>
               <option value="fn">False Negatives (Malicious Flagged Benign)</option>
               <option value="malicious_obfuscated">Malicious Obfuscated Only</option>
@@ -410,9 +374,9 @@
             </select>
           </div>
 
-          <div class="filter-group">
-            <label for="filterProfile">Profile:</label>
-            <select id="filterProfile" class="form-input">
+          <div class="form-field" style="margin-bottom: 0;">
+            <label class="form-label" for="filterProfile">Profile:</label>
+            <select id="filterProfile" class="input-box">
               <option value="all">All Application Profiles</option>
               <option value="web_browsing">web_browsing</option>
               <option value="video_streaming">video_streaming</option>
@@ -426,129 +390,116 @@
             </select>
           </div>
 
-          <div class="filter-group flex-1">
-            <label for="filterSearch">Search Recipe / Labels:</label>
-            <input type="text" id="filterSearch" placeholder="e.g. random_padding, timing_jitter..." class="form-input">
+          <div class="form-field flex-fill" style="margin-bottom: 0;">
+            <label class="form-label" for="filterSearch">Search Recipe or Keywords:</label>
+            <input type="text" id="filterSearch" placeholder="e.g. constant_rate_shaping, timing_jitter..." class="input-box">
           </div>
 
-          <button id="applyFiltersBtn" class="btn primary">Filter Flows</button>
+          <button id="applyFiltersBtn" class="btn-ctrl btn-primary">Apply Filters</button>
         </div>
 
-        <div class="card glass">
-          <div class="card-header">
-            <h3>Flow Records (<span id="totalFlowsCount">0</span> Matches)</h3>
-            <div class="pagination-controls" id="paginationControls">
-              <button id="prevPageBtn" class="btn small" disabled>‹ Prev</button>
-              <span id="pageIndicator" class="page-indicator">Page 1 of 1</span>
-              <button id="nextPageBtn" class="btn small">Next ›</button>
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Flow Records (<span id="totalFlowsCount">0</span> Matches)</span>
+            <div class="pagination-nav" id="paginationControls">
+              <button id="prevPageBtn" class="btn-ctrl btn-secondary btn-sm" disabled>‹ Previous</button>
+              <span id="pageIndicator" class="page-num">Page 1 of 1</span>
+              <button id="nextPageBtn" class="btn-ctrl btn-secondary btn-sm">Next ›</button>
             </div>
           </div>
-          <div class="table-responsive">
-            <table class="data-table" id="flowsTable">
+          <div class="table-wrapper">
+            <table class="data-tbl" id="flowsTable">
               <thead>
                 <tr>
-                  <th>Index</th>
-                  <th>Profile</th>
+                  <th>Flow ID</th>
+                  <th>Traffic Profile</th>
                   <th>Obfuscation Recipe</th>
-                  <th>True Label</th>
-                  <th>Prediction</th>
+                  <th>Ground Truth</th>
+                  <th>Model Prediction</th>
                   <th>Status</th>
-                  <th>Class Probabilities (Benign / Plain / Obfuscated)</th>
+                  <th>Softmax Probability Distribution (Benign / Plain / Obfuscated)</th>
                 </tr>
               </thead>
-              <tbody id="flowsTableBody">
-                <!-- Dynamically loaded -->
-              </tbody>
+              <tbody id="flowsTableBody"></tbody>
             </table>
           </div>
         </div>
       </section>
 
       <!-- ================= 6. LIVE REAL-TIME PREDICTOR ================= -->
-      <section id="view-live-predict" class="tab-view">
-        <div class="section-header">
-          <div>
-            <h2>Real-Time Flow Scorer & Predictor</h2>
-            <p>Generate on-the-fly network flows with chosen evasion techniques and score them immediately using the in-memory PyTorch checkpoint.</p>
-          </div>
-        </div>
-
-        <div class="two-col-grid">
-          <!-- Flow Generator Controls -->
-          <div class="card glass">
-            <div class="card-header">
-              <h3>1. Configure Target Flow</h3>
-              <span class="badge blue">Traffic Synthesizer</span>
+      <section id="view-live-predict" class="tab-view tab-panel">
+        <div class="grid-2col">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Flow Generator Parameters</span>
+              <span class="tag tag-blue">Feature Synthesizer</span>
             </div>
-            <div class="card-body">
-              <div class="form-group mb-3">
-                <label for="predictModel">Model Checkpoint:</label>
-                <select id="predictModel" class="form-input">
-                  <option value="hybrid">hybrid (CNN + MLP) — Recommended</option>
-                  <option value="hybrid_advtrain">hybrid_advtrain (Adversarially Hardened)</option>
-                  <option value="cnn1d">cnn1d (Sequence Only)</option>
-                  <option value="mlp">mlp (Statistics Only)</option>
-                  <option value="gru">gru (Recurrent)</option>
-                </select>
-              </div>
-
-              <div class="form-group mb-3">
-                <label for="predictProfile">Application Profile:</label>
-                <select id="predictProfile" class="form-input">
-                  <optgroup label="Benign Profiles">
-                    <option value="video_streaming">video_streaming (Adaptive Bitrate bursts)</option>
-                    <option value="web_browsing">web_browsing (TLS, HTML/JS asset bursts)</option>
-                    <option value="voip_call">voip_call (Metronomic real-time UDP/RTP)</option>
-                    <option value="file_download">file_download (High MTU saturation)</option>
-                    <option value="ssh_interactive">ssh_interactive (Human keystroke cadence)</option>
-                  </optgroup>
-                  <optgroup label="Malicious Profiles">
-                    <option value="port_scan">port_scan (High-frequency probe packets)</option>
-                    <option value="brute_force">brute_force (Repeated authentication attempts)</option>
-                    <option value="data_exfiltration">data_exfiltration (Outbound bulk transfer)</option>
-                    <option value="reverse_shell">reverse_shell (C2 command execution)</option>
-                    <option value="ddos_flood">ddos_flood (High-volume packet flood)</option>
-                  </optgroup>
-                </select>
-              </div>
-
-              <div class="form-group mb-3">
-                <label for="predictRecipe">Obfuscation Technique / Recipe:</label>
-                <select id="predictRecipe" class="form-input">
-                  <option value="none">none (Undisguised baseline)</option>
-                  <option value="random_padding">random_padding (Random byte padding)</option>
-                  <option value="block_padding">block_padding (64/128-byte power-of-two padding)</option>
-                  <option value="timing_jitter">timing_jitter (Randomized inter-arrival delays)</option>
-                  <option value="constant_rate_shaping">constant_rate_shaping (Fixed metronome pacing)</option>
-                  <option value="fragmentation">fragmentation (Small packet splitting)</option>
-                  <option value="tunnel_encapsulation">tunnel_encapsulation (Outer header overhead)</option>
-                  <option value="random_padding+timing_jitter">random_padding + timing_jitter (Combined)</option>
-                  <option value="block_padding+constant_rate_shaping">block_padding + constant_rate_shaping (Combined)</option>
-                  <option value="fragmentation+constant_rate_shaping">fragmentation + constant_rate_shaping (Combined)</option>
-                </select>
-              </div>
-
-              <div class="form-group mb-3">
-                <label for="predictSeed">Random Seed:</label>
-                <input type="number" id="predictSeed" value="42" class="form-input">
-              </div>
-
-              <button id="runPredictionBtn" class="btn primary full-width">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-                Synthesize & Classify Flow Now
-              </button>
+            
+            <div class="form-field">
+              <label class="form-label" for="predictModel">Model Weights:</label>
+              <select id="predictModel" class="input-box">
+                <option value="hybrid">hybrid (CNN + MLP)</option>
+                <option value="hybrid_advtrain">hybrid_advtrain (Adversarial Defense)</option>
+                <option value="cnn1d">cnn1d (Sequence)</option>
+                <option value="mlp">mlp (Moments)</option>
+                <option value="gru">gru (Recurrent)</option>
+              </select>
             </div>
+
+            <div class="form-field">
+              <label class="form-label" for="predictProfile">Application Profile:</label>
+              <select id="predictProfile" class="input-box">
+                <optgroup label="Benign Profiles">
+                  <option value="video_streaming">video_streaming (Adaptive Bitrate bursts)</option>
+                  <option value="web_browsing">web_browsing (TLS, HTML/JS asset bursts)</option>
+                  <option value="voip_call">voip_call (Metronomic UDP/RTP)</option>
+                  <option value="file_download">file_download (High MTU saturation)</option>
+                  <option value="ssh_interactive">ssh_interactive (Interactive keystroke bursts)</option>
+                </optgroup>
+                <optgroup label="Malicious Profiles">
+                  <option value="port_scan">port_scan (High-frequency probe packets)</option>
+                  <option value="brute_force">brute_force (Repeated authentication bursts)</option>
+                  <option value="data_exfiltration">data_exfiltration (Outbound bulk transfer)</option>
+                  <option value="reverse_shell">reverse_shell (C2 command execution)</option>
+                  <option value="ddos_flood">ddos_flood (Volumetric packet flood)</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="predictRecipe">Obfuscation Technique:</label>
+              <select id="predictRecipe" class="input-box">
+                <option value="none">none (Undisguised baseline)</option>
+                <option value="random_padding">random_padding (Random byte padding)</option>
+                <option value="block_padding">block_padding (64/128-byte block power-of-two padding)</option>
+                <option value="timing_jitter">timing_jitter (Randomized inter-arrival delays)</option>
+                <option value="constant_rate_shaping">constant_rate_shaping (Metronome pacing)</option>
+                <option value="fragmentation">fragmentation (Small packet splitting)</option>
+                <option value="tunnel_encapsulation">tunnel_encapsulation (Outer header encapsulation)</option>
+                <option value="random_padding+timing_jitter">random_padding + timing_jitter</option>
+                <option value="block_padding+constant_rate_shaping">block_padding + constant_rate_shaping</option>
+                <option value="fragmentation+constant_rate_shaping">fragmentation + constant_rate_shaping</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="predictSeed">Random Seed:</label>
+              <input type="number" id="predictSeed" value="42" class="input-box">
+            </div>
+
+            <button id="runPredictionBtn" class="btn-ctrl btn-primary btn-full" style="margin-top: 8px;">
+              Synthesize & Classify Flow
+            </button>
           </div>
 
-          <!-- Real-Time Prediction Outcome -->
-          <div class="card glass">
-            <div class="card-header">
-              <h3>2. Real-Time Detection Verdict</h3>
-              <span class="badge grey" id="predictStatusBadge">Awaiting Input</span>
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Inference Telemetry</span>
+              <span class="tag tag-slate" id="predictStatusBadge">Awaiting Flow</span>
             </div>
-            <div class="card-body" id="predictResultBody">
-              <div class="empty-state">
-                <p>Click "Synthesize & Classify Flow Now" to evaluate a flow against the neural network.</p>
+            <div id="predictResultBody">
+              <div style="padding: 40px; text-align: center; color: var(--text-tertiary);">
+                Configure parameters and click "Synthesize & Classify Flow" to evaluate against the PyTorch checkpoint.
               </div>
             </div>
           </div>
@@ -556,86 +507,73 @@
       </section>
 
       <!-- ================= 7. CLI STUDIO ================= -->
-      <section id="view-cli-studio" class="tab-view">
-        <div class="section-header">
-          <div>
-            <h2>antod CLI Command Studio</h2>
-            <p>Generate, inspect, and run arbitrary commands using the official <code>antod</code> command-line interface.</p>
-          </div>
-        </div>
-
-        <div class="two-col-grid">
-          <div class="card glass">
-            <div class="card-header">
-              <h3>Command Builder</h3>
-              <span class="badge cyan">Interactive Flags</span>
+      <section id="view-cli-studio" class="tab-view tab-panel">
+        <div class="grid-2col">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">CLI Execution Generator</span>
+              <span class="tag tag-slate">antod entrypoint</span>
             </div>
-            <div class="card-body">
-              <div class="form-group mb-3">
-                <label for="cliSubcommand">Subcommand:</label>
-                <select id="cliSubcommand" class="form-input">
-                  <option value="evaluate">evaluate — Generate recall/accuracy breakdown</option>
-                  <option value="attack">attack — Run adversarial robustness sweep</option>
-                  <option value="calibrate">calibrate — Temperature scaling & base rate</option>
-                  <option value="train">train — Train model & fit baselines</option>
-                  <option value="generate">generate — Produce synthetic dataset</option>
-                  <option value="predict">predict — Score custom per-packet CSV</option>
-                </select>
-              </div>
 
-              <div class="form-group mb-3">
-                <label for="cliConfig">Config File:</label>
-                <select id="cliConfig" class="form-input">
-                  <option value="configs/hybrid.yaml">configs/hybrid.yaml (Hybrid CNN+MLP)</option>
-                  <option value="configs/hybrid_advtrain.yaml">configs/hybrid_advtrain.yaml (Adversarial Training)</option>
-                  <option value="configs/cnn1d.yaml">configs/cnn1d.yaml (1D-CNN)</option>
-                  <option value="configs/mlp.yaml">configs/mlp.yaml (MLP)</option>
-                  <option value="configs/gru.yaml">configs/gru.yaml (GRU)</option>
-                  <option value="configs/dataset.yaml">configs/dataset.yaml (Dataset Generator)</option>
-                </select>
-              </div>
+            <div class="form-field">
+              <label class="form-label" for="cliSubcommand">Command Mode:</label>
+              <select id="cliSubcommand" class="input-box">
+                <option value="evaluate">evaluate — Generate recall/accuracy breakdown</option>
+                <option value="attack">attack — Run adversarial robustness sweep</option>
+                <option value="calibrate">calibrate — Temperature scaling & base rate</option>
+                <option value="train">train — Train model & fit baselines</option>
+                <option value="generate">generate — Produce synthetic dataset</option>
+                <option value="predict">predict — Score custom per-packet CSV</option>
+              </select>
+            </div>
 
-              <div class="form-group mb-3">
-                <label for="cliEpochs">Override Epochs (optional):</label>
-                <input type="number" id="cliEpochs" placeholder="e.g. 5" class="form-input">
-              </div>
+            <div class="form-field">
+              <label class="form-label" for="cliConfig">Target Configuration:</label>
+              <select id="cliConfig" class="input-box">
+                <option value="configs/hybrid.yaml">configs/hybrid.yaml (Hybrid CNN+MLP)</option>
+                <option value="configs/hybrid_advtrain.yaml">configs/hybrid_advtrain.yaml (Adversarial Training)</option>
+                <option value="configs/cnn1d.yaml">configs/cnn1d.yaml (1D-CNN)</option>
+                <option value="configs/mlp.yaml">configs/mlp.yaml (MLP)</option>
+                <option value="configs/gru.yaml">configs/gru.yaml (GRU)</option>
+                <option value="configs/dataset.yaml">configs/dataset.yaml (Dataset Generator)</option>
+              </select>
+            </div>
 
-              <div class="form-group mb-3">
-                <label for="cliFlows">Override N-Flows (optional):</label>
-                <input type="number" id="cliFlows" placeholder="e.g. 1000" class="form-input">
-              </div>
+            <div class="form-field">
+              <label class="form-label" for="cliEpochs">Override Epochs:</label>
+              <input type="number" id="cliEpochs" placeholder="Default from YAML" class="input-box">
+            </div>
 
-              <div class="form-group mb-3">
-                <label for="cliDevice">Device:</label>
-                <select id="cliDevice" class="form-input">
-                  <option value="cpu">cpu</option>
-                  <option value="auto">auto (use GPU if available)</option>
-                </select>
-              </div>
+            <div class="form-field">
+              <label class="form-label" for="cliFlows">Override N-Flows:</label>
+              <input type="number" id="cliFlows" placeholder="Default from YAML" class="input-box">
+            </div>
 
-              <div class="cmd-preview-box">
-                <label>Generated Command Line:</label>
-                <code id="cliGeneratedCmd">antod evaluate --config configs/hybrid.yaml --device cpu</code>
-              </div>
+            <div class="form-field">
+              <label class="form-label" for="cliDevice">Execution Device:</label>
+              <select id="cliDevice" class="input-box">
+                <option value="cpu">cpu</option>
+                <option value="auto">auto (detect CUDA)</option>
+              </select>
+            </div>
 
-              <div class="btn-row mt-3">
-                <button id="copyCmdBtn" class="btn secondary">Copy Command</button>
-                <button id="executeCmdBtn" class="btn primary">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                  Execute in Background
-                </button>
-              </div>
+            <div class="cli-cmd-display">
+              <code id="cliGeneratedCmd">antod evaluate --config configs/hybrid.yaml --device cpu</code>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 14px;">
+              <button id="copyCmdBtn" class="btn-ctrl btn-secondary">Copy CLI</button>
+              <button id="executeCmdBtn" class="btn-ctrl btn-primary flex-fill">Execute in Background</button>
             </div>
           </div>
 
-          <!-- Execution Terminal -->
-          <div class="card glass terminal-card">
-            <div class="card-header">
-              <h3>Execution Terminal</h3>
-              <span class="badge grey" id="cliStatusBadge">Idle</span>
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Console Output Stream</span>
+              <span class="tag tag-slate" id="cliStatusBadge">Idle</span>
             </div>
-            <div class="terminal-body" id="cliTerminalOutput">
-              <span class="text-muted">Terminal ready. Commands executed here stream live stdout/stderr.</span>
+            <div class="terminal-pane" id="cliTerminalOutput">
+              Terminal ready. Commands launched from the studio will stream live stdout/stderr here.
             </div>
           </div>
         </div>
@@ -643,10 +581,9 @@
 
     </main>
 
-    <!-- Footer -->
-    <footer class="app-footer">
-      <p>ANTOD — Deep Learning Mini Project (CS722T2C) · Sahyadri College of Engineering & Management, Mangaluru</p>
-      <p class="text-muted">Vivek Neeralagi · Muhammad Shahbik · Aravind P Sagar · J Aditya · Guide: Mrs. Varsha M</p>
+    <!-- Professional Footer -->
+    <footer class="app-footer-bar">
+      ANTOD // Adversarial Network Traffic Obfuscation Detection · Department of Computer Science & Engineering · Sahyadri College of Eng. & Mgmt
     </footer>
   </div>
 

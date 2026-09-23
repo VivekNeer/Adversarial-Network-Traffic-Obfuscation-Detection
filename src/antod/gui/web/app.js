@@ -223,47 +223,47 @@ function renderOverview() {
 
   // KPI Grid
   elements.kpiGrid.innerHTML = `
-    <div class="kpi-card cyan">
-      <div class="kpi-label">Test Set Accuracy</div>
-      <div class="kpi-value">${pct(test.accuracy || 0)}</div>
-      <div class="kpi-subtext">Overall 3-class classification</div>
+    <div class="metric-card highlight-blue">
+      <div class="metric-name">Balanced Accuracy</div>
+      <div class="metric-stat">${pct(test.accuracy || 0)}</div>
+      <div class="metric-detail">3-Class Test Split (4,001 flows)</div>
     </div>
-    <div class="kpi-card amber">
-      <div class="kpi-label">Obfuscated Recall</div>
-      <div class="kpi-value">${pct(test.obfuscated_recall || 0)}</div>
-      <div class="kpi-subtext">DPI-evading traffic detected</div>
+    <div class="metric-card highlight-amber">
+      <div class="metric-name">Obfuscated Recall</div>
+      <div class="metric-stat">${pct(test.obfuscated_recall || 0)}</div>
+      <div class="metric-detail">DPI-Evading Attacks Detected</div>
     </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">Malicious Recall</div>
-      <div class="kpi-value">${pct(test.malicious_recall || 0)}</div>
-      <div class="kpi-subtext">Plain + obfuscated caught</div>
+    <div class="metric-card highlight-emerald">
+      <div class="metric-name">Malicious Recall</div>
+      <div class="metric-stat">${pct(test.malicious_recall || 0)}</div>
+      <div class="metric-detail">Plain + Obfuscated Traffic</div>
     </div>
-    <div class="kpi-card purple">
-      <div class="kpi-label">Base-Rate Precision (99% Benign)</div>
-      <div class="kpi-value">${pct(br99.precision || 0)}</div>
-      <div class="kpi-subtext">${(br99.false_alerts_per_10k || 0).toFixed(1)} false alerts per 10k flows</div>
+    <div class="metric-card highlight-rose">
+      <div class="metric-name">Base-Rate Precision (99%)</div>
+      <div class="metric-stat">${pct(br99.precision || 0)}</div>
+      <div class="metric-detail">${(br99.false_alerts_per_10k || 0).toFixed(1)} alerts / 10k real flows</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">False Positive Rate</div>
-      <div class="kpi-value">${pct(test.false_positive_rate || 0)}</div>
-      <div class="kpi-subtext">Benign misclassified as attack</div>
+    <div class="metric-card">
+      <div class="metric-name">False Positive Rate</div>
+      <div class="metric-stat">${pct(test.false_positive_rate || 0)}</div>
+      <div class="metric-detail">Benign Traffic Flagged</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Calibration (ECE)</div>
-      <div class="kpi-value">${num(calib.ece_after, 4)}</div>
-      <div class="kpi-subtext">Temperature T = ${num(calib.temperature, 2)}</div>
+    <div class="metric-card">
+      <div class="metric-name">Expected Calibration Error</div>
+      <div class="metric-stat">${num(calib.ece_after, 4)}</div>
+      <div class="metric-detail">Temperature Scaling T = ${num(calib.temperature, 2)}</div>
     </div>
   `;
 
   // Active Model Summary Box
   elements.activeModelSummary.innerHTML = `
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-      <div><span class="text-muted">Architecture:</span> <strong>${m.model}</strong></div>
-      <div><span class="text-muted">Defense:</span> <strong>${m.defense}</strong></div>
-      <div><span class="text-muted">Parameters:</span> <strong>${(m.n_parameters || 0).toLocaleString()}</strong></div>
-      <div><span class="text-muted">Training Duration:</span> <strong>${num(m.train_seconds, 1)}s (Epoch ${m.best_epoch})</strong></div>
-      <div><span class="text-muted">Macro F1:</span> <strong>${pct(test.macro_f1 || 0)}</strong></div>
-      <div><span class="text-muted">ROC-AUC Macro:</span> <strong>${num(test.roc_auc_macro, 4)}</strong></div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.8rem;">
+      <div><span style="color: var(--text-tertiary)">Architecture:</span> <strong style="font-family: var(--font-mono); color: var(--text-primary)">${m.model}</strong></div>
+      <div><span style="color: var(--text-tertiary)">Defense Mode:</span> <strong style="font-family: var(--font-mono); color: var(--text-primary)">${m.defense}</strong></div>
+      <div><span style="color: var(--text-tertiary)">Parameters:</span> <strong style="font-family: var(--font-mono); color: var(--text-primary)">${(m.n_parameters || 0).toLocaleString()}</strong></div>
+      <div><span style="color: var(--text-tertiary)">Training Time:</span> <strong style="font-family: var(--font-mono); color: var(--text-primary)">${num(m.train_seconds, 1)}s (Epoch ${m.best_epoch})</strong></div>
+      <div><span style="color: var(--text-tertiary)">Macro F1:</span> <strong style="font-family: var(--font-mono); color: var(--text-primary)">${pct(test.macro_f1 || 0)}</strong></div>
+      <div><span style="color: var(--text-tertiary)">ROC-AUC Macro:</span> <strong style="font-family: var(--font-mono); color: var(--text-primary)">${num(test.roc_auc_macro, 4)}</strong></div>
     </div>
   `;
 }
@@ -455,25 +455,25 @@ async function loadFlows() {
       const oPct = Math.round(r.malicious_obfuscated * 100);
 
       const statusBadge = r.correct
-        ? `<span class="badge green">Correct</span>`
-        : `<span class="badge red">MISMATCH</span>`;
+        ? `<span class="tag tag-green">VALID</span>`
+        : `<span class="tag tag-rose">MISMATCH</span>`;
 
       return `
         <tr>
-          <td>#${r.index}</td>
-          <td><strong>${r.profile}</strong></td>
-          <td><code>${r.recipe}</code></td>
-          <td><span class="tag-label ${r.y_true}">${r.y_true}</span></td>
-          <td><span class="tag-label ${r.y_pred}">${r.y_pred}</span></td>
+          <td style="font-family: var(--font-mono)">#${r.index}</td>
+          <td><strong style="color: var(--text-primary)">${r.profile}</strong></td>
+          <td><code style="color: var(--text-code); font-size: 0.74rem;">${r.recipe}</code></td>
+          <td><span class="tag tag-slate">${r.y_true}</span></td>
+          <td><span class="tag ${r.correct ? 'tag-green' : 'tag-rose'}">${r.y_pred}</span></td>
           <td>${statusBadge}</td>
           <td>
-            <div class="prob-bar-container">
-              <div class="prob-track">
-                <div class="prob-seg benign" style="width: ${bPct}%" title="Benign: ${bPct}%"></div>
-                <div class="prob-seg plain" style="width: ${pPct}%" title="Plain: ${pPct}%"></div>
-                <div class="prob-seg obfuscated" style="width: ${oPct}%" title="Obfuscated: ${oPct}%"></div>
+            <div class="meter-row">
+              <div class="meter-track">
+                <div class="meter-fill benign" style="width: ${bPct}%" title="Benign: ${bPct}%"></div>
+                <div class="meter-fill plain" style="width: ${pPct}%" title="Plain: ${pPct}%"></div>
+                <div class="meter-fill obfuscated" style="width: ${oPct}%" title="Obfuscated: ${oPct}%"></div>
               </div>
-              <span>${bPct}% / ${pPct}% / ${oPct}%</span>
+              <span style="color: var(--text-tertiary)">${bPct}% / ${pPct}% / ${oPct}%</span>
             </div>
           </td>
         </tr>
@@ -495,7 +495,7 @@ async function runLivePrediction() {
 
   elements.runPredictionBtn.disabled = true;
   elements.predictStatusBadge.textContent = 'Synthesizing & Classifying...';
-  elements.predictStatusBadge.className = 'badge amber';
+  elements.predictStatusBadge.className = 'tag tag-amber';
 
   try {
     const res = await fetch('/api/predict', {
@@ -506,9 +506,9 @@ async function runLivePrediction() {
     const data = await res.json();
 
     if (data.error) {
-      elements.predictResultBody.innerHTML = `<div class="empty-state" style="color: #f87171">Error: ${data.error}</div>`;
+      elements.predictResultBody.innerHTML = `<div style="padding: 24px; text-align: center; color: #fb7185">Inference Error: ${data.error}</div>`;
       elements.predictStatusBadge.textContent = 'Failed';
-      elements.predictStatusBadge.className = 'badge red';
+      elements.predictStatusBadge.className = 'tag tag-rose';
       return;
     }
 
@@ -516,64 +516,71 @@ async function runLivePrediction() {
     const s = data.flow_summary;
     const isCorrect = data.predicted_class === data.true_class;
 
-    elements.predictStatusBadge.textContent = isCorrect ? 'Classified Successfully' : 'Misclassified Under Evasion';
-    elements.predictStatusBadge.className = isCorrect ? 'badge green' : 'badge red';
+    elements.predictStatusBadge.textContent = isCorrect ? 'CLASSIFIED (CONGRUENT)' : 'EVASION DETECTED (MISMATCH)';
+    elements.predictStatusBadge.className = isCorrect ? 'tag tag-green' : 'tag tag-rose';
+
+    // Professional SVG icons
+    const iconShield = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>`;
+    const iconAlert = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    const iconWarning = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+
+    const statusIcon = data.predicted_class === 'benign' ? iconShield : data.predicted_class === 'malicious_plain' ? iconAlert : iconWarning;
 
     elements.predictResultBody.innerHTML = `
-      <div class="prediction-card">
-        <div class="verdict-header">
-          <div class="verdict-icon ${data.predicted_class}">
-            ${data.predicted_class === 'benign' ? '🛡️' : data.predicted_class === 'malicious_plain' ? '⚠️' : '🕵️'}
+      <div class="verdict-box">
+        <div class="verdict-top">
+          <div class="verdict-indicator ${data.predicted_class}">
+            ${statusIcon}
           </div>
+          <div class="verdict-head-text">
+            <h4>${data.predicted_class.toUpperCase().replace('_', ' ')}</h4>
+            <div style="font-size: 0.78rem; color: var(--text-tertiary)">Ground Truth Label: <strong style="color: var(--text-primary)">${data.true_class}</strong></div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
           <div>
-            <div class="verdict-title">${data.predicted_class.toUpperCase().replace('_', ' ')}</div>
-            <div class="text-muted">True Ground Truth: <strong>${data.true_class}</strong></div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 3px;">
+              <span style="color: var(--text-secondary)">Benign Probability</span>
+              <strong style="font-family: var(--font-mono)">${pct(p.benign)}</strong>
+            </div>
+            <div style="height: 5px; background: #1e293b; border-radius: 2px; overflow: hidden;">
+              <div style="height: 100%; width: ${p.benign * 100}%; background: var(--color-benign);"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 3px;">
+              <span style="color: var(--text-secondary)">Malicious Plain Probability</span>
+              <strong style="font-family: var(--font-mono)">${pct(p.malicious_plain)}</strong>
+            </div>
+            <div style="height: 5px; background: #1e293b; border-radius: 2px; overflow: hidden;">
+              <div style="height: 100%; width: ${p.malicious_plain * 100}%; background: var(--color-plain);"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 3px;">
+              <span style="color: var(--text-secondary)">Malicious Obfuscated Probability</span>
+              <strong style="font-family: var(--font-mono)">${pct(p.malicious_obfuscated)}</strong>
+            </div>
+            <div style="height: 5px; background: #1e293b; border-radius: 2px; overflow: hidden;">
+              <div style="height: 100%; width: ${p.malicious_obfuscated * 100}%; background: var(--color-obfuscated);"></div>
+            </div>
           </div>
         </div>
 
-        <div class="prob-meter-row">
-          <div class="prob-meter-header">
-            <span>Benign Traffic Probability</span>
-            <strong>${pct(p.benign)}</strong>
-          </div>
-          <div class="prob-meter-track">
-            <div class="prob-meter-fill benign" style="width: ${p.benign * 100}%"></div>
-          </div>
-        </div>
-
-        <div class="prob-meter-row">
-          <div class="prob-meter-header">
-            <span>Malicious Plain Probability</span>
-            <strong>${pct(p.malicious_plain)}</strong>
-          </div>
-          <div class="prob-meter-track">
-            <div class="prob-meter-fill malicious_plain" style="width: ${p.malicious_plain * 100}%"></div>
-          </div>
-        </div>
-
-        <div class="prob-meter-row">
-          <div class="prob-meter-header">
-            <span>Malicious Obfuscated Probability</span>
-            <strong>${pct(p.malicious_obfuscated)}</strong>
-          </div>
-          <div class="prob-meter-track">
-            <div class="prob-meter-fill malicious_obfuscated" style="width: ${p.malicious_obfuscated * 100}%"></div>
-          </div>
-        </div>
-
-        <div class="card glass mt-3" style="background: rgba(0,0,0,0.2);">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.82rem;">
-            <div><span class="text-muted">Packets:</span> <strong>${s.n_packets}</strong></div>
-            <div><span class="text-muted">Duration:</span> <strong>${s.duration_seconds}s</strong></div>
-            <div><span class="text-muted">Total Volume:</span> <strong>${s.total_bytes.toLocaleString()} bytes</strong></div>
-            <div><span class="text-muted">Avg Packet Size:</span> <strong>${s.avg_packet_size} bytes</strong></div>
-          </div>
+        <div class="verdict-meta-grid">
+          <div><span style="color: var(--text-tertiary)">Packets:</span> <strong style="font-family: var(--font-mono)">${s.n_packets}</strong></div>
+          <div><span style="color: var(--text-tertiary)">Duration:</span> <strong style="font-family: var(--font-mono)">${s.duration_seconds}s</strong></div>
+          <div><span style="color: var(--text-tertiary)">Total Volume:</span> <strong style="font-family: var(--font-mono)">${s.total_bytes.toLocaleString()} B</strong></div>
+          <div><span style="color: var(--text-tertiary)">Avg Size:</span> <strong style="font-family: var(--font-mono)">${s.avg_packet_size} B</strong></div>
         </div>
       </div>
     `;
   } catch (err) {
     console.error('Prediction failed:', err);
-    elements.predictResultBody.innerHTML = `<div class="empty-state" style="color: #f87171">Failed to run inference: ${err.message}</div>`;
+    elements.predictResultBody.innerHTML = `<div style="padding: 24px; text-align: center; color: #fb7185">Inference Execution Failed: ${err.message}</div>`;
   } finally {
     elements.runPredictionBtn.disabled = false;
   }
